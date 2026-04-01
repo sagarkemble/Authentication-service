@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node dist/server.js\"",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +26,8 @@
   },
   "dependencies": {
     "dotenv": "^17.3.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongoose": "^9.3.3"
   },
   "config": {
     "commitizen": {
