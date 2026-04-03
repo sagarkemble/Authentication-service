@@ -1,35 +1,37 @@
 class ApiError extends Error {
   statusCode: number;
   isOperational: boolean;
-  constructor(statusCode: number, message: string) {
+  error: unknown;
+  constructor(statusCode: number, message: string, error?: unknown) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = true;
+    this.error = error;
     Error.captureStackTrace(this, this.constructor);
   }
 
-  static badRequest(message = "Bad Request") {
-    return new ApiError(400, message);
+  static badRequest(message = "Bad Request", error?: unknown) {
+    return new ApiError(400, message, error);
   }
 
-  static unauthorized(message = "Unauthorized") {
-    return new ApiError(401, message);
+  static unauthorized(message = "Unauthorized", error?: unknown) {
+    return new ApiError(401, message, error);
   }
 
-  static forbidden(message = "Forbidden") {
-    return new ApiError(403, message);
+  static forbidden(message = "Forbidden", error?: unknown) {
+    return new ApiError(403, message, error);
   }
 
-  static notFound(message = "Not Found") {
-    return new ApiError(404, message);
+  static notFound(message = "Not Found", error?: unknown) {
+    return new ApiError(404, message, error);
   }
 
-  static conflict(message = "Conflict") {
-    return new ApiError(409, message);
+  static conflict(message = "Conflict", error?: unknown) {
+    return new ApiError(409, message, error);
   }
 
-  static unprocessable(message = "Unprocessable Entity") {
-    return new ApiError(422, message);
+  static unprocessable(message = "Unprocessable Entity", error?: unknown) {
+    return new ApiError(422, message, error);
   }
 
   static tooManyRequests(message = "Too Many Requests") {

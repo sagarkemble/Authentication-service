@@ -6,10 +6,15 @@ class BaseDto {
   static schema = z.object({});
   static validate(data: Request["body"]) {
     const parsedData = this.schema.safeParse(data);
-    if (parsedData.error)
-      throw ApiError.badRequest(
-        "Invalid data: " + JSON.stringify(parsedData.error.format()),
-      );
+
+    if (parsedData.error) {
+      const formatedError = parsedData.error.issues.map((issue) => ({
+        path: issue.path,
+        message: issue.message,
+      }));
+
+      throw ApiError.badRequest("Invalid data: ", formatedError);
+    }
     return parsedData.data;
   }
 }
