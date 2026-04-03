@@ -14,5 +14,10 @@ authRouter.post(
   authController.verifyEmail,
 );
 authRouter.post("/login", validateDto(loginDto), authController.login);
+authRouter.post(
+  "/refresh-access-token",
+  validateDto(loginDto),
+  authController.login,
+);
 
 export default authRouter;

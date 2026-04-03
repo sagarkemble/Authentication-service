@@ -5,6 +5,7 @@ import {
   generateHashedToken,
   generateRefreshToken,
   hashToken,
+  verifyRefreshToken,
 } from "../../common/utils/jwt.utils.js";
 import User from "./auth.model.js";
 
@@ -118,4 +119,26 @@ const login = async function ({
   return safeUser;
 };
 
-export { register, verifyEmail, login };
+const refreshAccessToken = async function ({
+  refreshToken,
+}: {
+  refreshToken: string;
+}) {
+  const decoded = verifyRefreshToken(refreshToken) as { id: string };
+  const user = await User.findById(decoded.id).select("+refreshToken");
+  if (!user) throw ApiError.unauthorized("Invalid refresh token");
+
+  const hashedRefreshToken = hashToken(refreshToken);
+  if (hashedRefreshToken !== user.refreshToken)
+    throw ApiError.unauthorized("Invalid refresh token");
+
+  const newAccessToken = generateAccessToken({ id: user._id, role: user.role });
+  const newRefreshToken = generateRefreshToken({ id: user._id });
+
+  user.refreshToken = hashToken(newRefreshToken);
+  await user.save({ validateBeforeSave: false });
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+};
+
+export { register, verifyEmail, login, refreshAccessToken };

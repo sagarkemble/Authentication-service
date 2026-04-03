@@ -21,4 +21,9 @@ const verifyEmail = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "Mail successfully verified", userData);
 };
 
+const refreshAccessToken = async function (req: Request, res: Response) {
+  const tokens = authService.refreshAccessToken(req.body);
+  ApiResponse.ok(res, "Access Token Refreshed", tokens);
+};
+
 export { register, verifyEmail, login };
