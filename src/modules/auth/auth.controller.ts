@@ -11,8 +11,14 @@ const register = async function (req: Request, res: Response) {
   );
 };
 
+const login = async function (req: Request, res: Response) {
+  const userData = await authService.login(req.body);
+  ApiResponse.ok(res, "Login successful.", userData);
+};
+
 const verifyEmail = async function (req: Request, res: Response) {
   const userData = await authService.verifyEmail(req.body);
   ApiResponse.ok(res, "Mail successfully verified", userData);
 };
-export { register, verifyEmail };
+
+export { register, verifyEmail, login };

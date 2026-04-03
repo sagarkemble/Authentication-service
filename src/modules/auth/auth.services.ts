@@ -1,7 +1,9 @@
 import sendEmail from "../../common/config/email.js";
 import ApiError from "../../common/utils/api-error.js";
 import {
+  generateAccessToken,
   generateHashedToken,
+  generateRefreshToken,
   hashToken,
 } from "../../common/utils/jwt.utils.js";
 import User from "./auth.model.js";
@@ -80,4 +82,40 @@ const verifyEmail = async function ({
   return safeUser;
 };
 
-export { register, verifyEmail };
+const login = async function ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) throw ApiError.unauthorized("Invalid email or password");
+
+  const isValidPassword = await user.comparePassword(password);
+  if (!isValidPassword)
+    throw ApiError.unauthorized("Invalid email or password");
+
+  if (!user.isVerified) {
+    throw ApiError.forbidden("Please verify your email before logging in");
+  }
+
+  const accessToken = generateAccessToken({ id: user._id, role: user.role });
+  const refreshToken = generateRefreshToken({ id: user._id });
+
+  user.refreshToken = hashToken(refreshToken);
+  await user.save({ validateBeforeSave: false });
+
+  const userObj = user.toObject();
+  const {
+    password: _password,
+    verificationToken: _verificationToken,
+    refreshToken: _refreshToken,
+    resetPasswordToken,
+    ...safeUser
+  } = user.toObject();
+  // safeUser.accessToken = accessToken;
+  return safeUser;
+};
+
+export { register, verifyEmail, login };
