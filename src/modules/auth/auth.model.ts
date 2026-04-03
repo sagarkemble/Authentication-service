@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import { de } from "zod/v4/locales";
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -9,6 +10,7 @@ const userSchema = new mongoose.Schema({
     maxLength: 50,
     trim: true,
     lowercase: true,
+    default: null,
   },
   password: {
     type: String,
@@ -20,6 +22,7 @@ const userSchema = new mongoose.Schema({
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
     ],
     select: false,
+    default: null,
   },
   email: {
     type: String,
@@ -27,15 +30,16 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     lowercase: true,
+    default: null,
   },
   role: {
     type: String,
     enum: ["user", "admin"],
     default: "user",
   },
-  verificationToken: { type: String, select: false },
-  refreshToken: { type: String, select: false },
-  resetPasswordToken: { type: String, select: false },
+  verificationToken: { type: String, select: false, default: null },
+  refreshToken: { type: String, select: false, default: null },
+  resetPasswordToken: { type: String, select: false, default: null },
 });
 
 userSchema.pre("save", async function () {
