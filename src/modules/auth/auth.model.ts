@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import type { string } from "zod";
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -29,12 +28,12 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
-  verificationToken: { type: String, select: false },
   role: {
     type: String,
     enum: ["user", "admin"],
     default: "user",
   },
+  verificationToken: { type: String, select: false },
   refreshToken: { type: String, select: false },
   resetPasswordToken: { type: String, select: false },
 });
