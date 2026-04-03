@@ -111,11 +111,9 @@ const login = async function ({
   const {
     password: _password,
     verificationToken: _verificationToken,
-    refreshToken: _refreshToken,
     resetPasswordToken,
     ...safeUser
   } = user.toObject();
-  // safeUser.accessToken = accessToken;
   return safeUser;
 };
 
