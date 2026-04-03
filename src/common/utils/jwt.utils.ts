@@ -20,10 +20,17 @@ const verifyRefreshToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_REFRESH_SECRET!);
 };
 
-const generateHashedToken = async () => {
+const generateHashedToken = () => {
   const rawToken = crypto.randomBytes(32).toString("hex");
-  const hashedToken = bcrypt.hashSync(rawToken, 12);
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(rawToken)
+    .digest("hex");
+
   return { rawToken, hashedToken };
+};
+const hashToken = (token: string) => {
+  return crypto.createHash("sha256").update(token).digest("hex");
 };
 
 export {
@@ -32,4 +39,5 @@ export {
   generateRefreshToken,
   verifyRefreshToken,
   generateHashedToken,
+  hashToken,
 };

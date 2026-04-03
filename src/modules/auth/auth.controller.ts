@@ -10,4 +10,9 @@ const register = async function (req: Request, res: Response) {
     userData,
   );
 };
-export { register };
+
+const verifyEmail = async function (req: Request, res: Response) {
+  const userData = await authService.verifyEmail(req.body);
+  ApiResponse.ok(res, "Mail successfully verified", userData);
+};
+export { register, verifyEmail };
