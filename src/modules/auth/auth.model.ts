@@ -7,10 +7,10 @@ export interface IUser extends Document {
   password: string;
   role: "user" | "admin";
   isVerified: boolean;
-  verificationToken?: string;
-  refreshToken?: string;
-  resetPasswordToken?: string;
-  resetPasswordExpires?: Date;
+  verificationToken?: string | null;
+  refreshToken?: string | null;
+  resetPasswordToken?: string | null;
+  resetPasswordExpires?: Date | null;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
