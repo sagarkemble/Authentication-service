@@ -124,11 +124,7 @@ const login = async function ({
   };
 };
 
-const refreshAccessToken = async function ({
-  refreshToken,
-}: {
-  refreshToken: string;
-}) {
+const refreshAccessToken = async function (refreshToken: string) {
   const decoded = verifyRefreshToken(refreshToken) as { id: string };
   const user = await User.findById(decoded.id).select("+refreshToken");
 

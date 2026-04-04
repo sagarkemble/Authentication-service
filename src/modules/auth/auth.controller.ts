@@ -30,8 +30,16 @@ const verifyEmail = async function (req: Request, res: Response) {
 };
 
 const refreshAccessToken = async function (req: Request, res: Response) {
-  const tokens = await authService.refreshAccessToken(req.body);
-  ApiResponse.ok(res, "Access Token Refreshed", tokens);
+  const refreshToken = req.cookies?.refreshToken;
+  const { accessToken, refreshToken: newRefreshToken } =
+    await authService.refreshAccessToken(refreshToken);
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  ApiResponse.ok(res, "Access Token Refreshed", { accessToken });
 };
 
 const logout = async function (req: Request, res: Response) {
