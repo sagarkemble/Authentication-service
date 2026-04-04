@@ -30,3 +30,4 @@ const validate = async function (
   };
   next();
 };
+export { validate };
