@@ -148,7 +148,7 @@ const refreshAccessToken = async function ({
 };
 
 const logout = async function ({ userId }: { userId: string }) {
-  await User.findOneAndUpdate(userId, { refreshToken: null });
+  await User.findOneAndUpdate({ _id: userId }, { refreshToken: null });
 };
 
 export { register, verifyEmail, login, refreshAccessToken, logout };
