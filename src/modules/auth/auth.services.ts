@@ -1,3 +1,4 @@
+import { string } from "zod";
 import sendEmail from "../../common/config/email.js";
 import ApiError from "../../common/utils/api-error.js";
 import {
@@ -90,7 +91,9 @@ const login = async function ({
   email: string;
   password: string;
 }) {
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email })
+    .select("+password")
+    .select("+verificationToken");
   if (!user) throw ApiError.unauthorized("Invalid email or password");
 
   const isValidPassword = await user.comparePassword(password);
@@ -106,15 +109,18 @@ const login = async function ({
 
   user.refreshToken = hashToken(refreshToken);
   await user.save({ validateBeforeSave: false });
-
-  const userObj = user.toObject();
   const {
     password: _password,
     verificationToken: _verificationToken,
+    refreshToken: _refreshToken,
     resetPasswordToken,
-    ...safeUser
+    ...userObj
   } = user.toObject();
-  return safeUser;
+
+  return {
+    ...userObj,
+    refreshToken,
+  };
 };
 
 const refreshAccessToken = async function ({
@@ -124,6 +130,7 @@ const refreshAccessToken = async function ({
 }) {
   const decoded = verifyRefreshToken(refreshToken) as { id: string };
   const user = await User.findById(decoded.id).select("+refreshToken");
+
   if (!user) throw ApiError.unauthorized("Invalid refresh token");
 
   const hashedRefreshToken = hashToken(refreshToken);

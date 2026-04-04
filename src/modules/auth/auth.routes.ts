@@ -4,6 +4,7 @@ import RegisterDto from "./dto/register.dto.js";
 import * as authController from "./auth.controller.js";
 import verifyEmailDto from "./dto/verifyEmail.dto.js";
 import loginDto from "./dto/login.dto.js";
+import refreshAccessTokenDto from "./dto/refreshAcessToken.dto.js";
 
 const authRouter: Router = Router();
 
@@ -16,8 +17,8 @@ authRouter.post(
 authRouter.post("/login", validateDto(loginDto), authController.login);
 authRouter.post(
   "/refresh-access-token",
-  validateDto(loginDto),
-  authController.login,
+  validateDto(refreshAccessTokenDto),
+  authController.refreshAccessToken,
 );
 
 export default authRouter;

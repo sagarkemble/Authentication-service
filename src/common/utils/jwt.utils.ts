@@ -16,6 +16,7 @@ const generateRefreshToken = (payload: {}) => {
     expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN ?? "7d") as any,
   });
 };
+
 const verifyRefreshToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_REFRESH_SECRET!);
 };
