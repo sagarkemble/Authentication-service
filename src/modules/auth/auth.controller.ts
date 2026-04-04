@@ -12,8 +12,16 @@ const register = async function (req: Request, res: Response) {
 };
 
 const login = async function (req: Request, res: Response) {
-  const userData = await authService.login(req.body);
-  ApiResponse.ok(res, "Login successful.", userData);
+  const { userObj, refreshToken, accessToken } = await authService.login(
+    req.body,
+  );
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  ApiResponse.ok(res, "Login successful.", { ...userObj, accessToken });
 };
 
 const verifyEmail = async function (req: Request, res: Response) {

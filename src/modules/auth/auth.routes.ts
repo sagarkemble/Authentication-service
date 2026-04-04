@@ -6,7 +6,7 @@ import verifyEmailDto from "./dto/verifyEmail.dto.js";
 import loginDto from "./dto/login.dto.js";
 import refreshAccessTokenDto from "./dto/refreshAcessToken.dto.js";
 import logoutDto from "./dto/logout.dto.js";
-import forgotPasswordDto from "./dto/forgotPassword.dot.js";
+import forgotPasswordDto from "./dto/forgotPassword.dto.js";
 import resetPasswordDto from "./dto/resetPassword.dto.js";
 
 const authRouter: Router = Router();

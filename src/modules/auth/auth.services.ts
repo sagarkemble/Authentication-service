@@ -118,7 +118,7 @@ const login = async function ({
   } = user.toObject();
 
   return {
-    ...userObj,
+    userObj,
     refreshToken,
     accessToken,
   };
