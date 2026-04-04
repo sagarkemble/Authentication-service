@@ -147,8 +147,8 @@ const logout = async function ({ userId }: { userId: string }) {
   await User.findOneAndUpdate({ _id: userId }, { refreshToken: null });
 };
 
-const getMe = async function ({ userId }: { userId: string }) {
-  const user = await User.findById(userId);
+const getMe = async function (id: string) {
+  const user = await User.findById(id);
   return user;
 };
 
