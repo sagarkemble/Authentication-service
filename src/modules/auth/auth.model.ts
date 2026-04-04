@@ -14,50 +14,53 @@ export interface IUser extends Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Name is required"],
-    minLength: 2,
-    maxLength: 50,
-    trim: true,
-    lowercase: true,
-    default: null,
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      minLength: 2,
+      maxLength: 50,
+      trim: true,
+      lowercase: true,
+      default: null,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minLength: 8,
+      maxLength: 32,
+      match: [
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      ],
+      select: false,
+      default: null,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      trim: true,
+      lowercase: true,
+      default: null,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: { type: String, select: false, default: null },
+    refreshToken: { type: String, select: false, default: null },
+    resetPasswordToken: { type: String, select: false, default: null },
+    resetPasswordExpires: { type: Date, select: false, default: null },
   },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minLength: 8,
-    maxLength: 32,
-    match: [
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-    ],
-    select: false,
-    default: null,
-  },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-    trim: true,
-    lowercase: true,
-    default: null,
-  },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-  verificationToken: { type: String, select: false, default: null },
-  refreshToken: { type: String, select: false, default: null },
-  resetPasswordToken: { type: String, select: false, default: null },
-  resetPasswordExpires: { type: Date, select: false, default: null },
-});
+  { timestamps: true },
+);
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
