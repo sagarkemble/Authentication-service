@@ -161,6 +161,7 @@ const forgotPassword = async function ({ email }: { email: string }) {
   if (!user) throw ApiError.unauthorized("Invalid email");
   const { rawToken, hashedToken } = generateHashedToken();
   user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
+  user.resetPasswordToken = hashedToken;
   await user.save();
   await sendEmail(
     email,
