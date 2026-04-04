@@ -5,20 +5,25 @@ import * as authController from "./auth.controller.js";
 import verifyEmailDto from "./dto/verifyEmail.dto.js";
 import loginDto from "./dto/login.dto.js";
 import refreshAccessTokenDto from "./dto/refreshAcessToken.dto.js";
+import logoutDto from "./dto/logout.dto.js";
 
 const authRouter: Router = Router();
 
 authRouter.post("/register", validateDto(RegisterDto), authController.register);
+
 authRouter.post(
   "/verify-mail",
   validateDto(verifyEmailDto),
   authController.verifyEmail,
 );
 authRouter.post("/login", validateDto(loginDto), authController.login);
+
 authRouter.post(
   "/refresh-access-token",
   validateDto(refreshAccessTokenDto),
   authController.refreshAccessToken,
 );
+
+authRouter.post("/logout", validateDto(logoutDto), authController.logout);
 
 export default authRouter;
