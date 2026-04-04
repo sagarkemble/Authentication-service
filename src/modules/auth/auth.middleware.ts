@@ -3,7 +3,7 @@ import ApiError from "../../common/utils/api-error.js";
 import { verifyAccessToken } from "../../common/utils/jwt.utils.js";
 import User from "./auth.model.js";
 
-const validate = async function (
+const authenticate = async function (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -30,4 +30,4 @@ const validate = async function (
   };
   next();
 };
-export { validate };
+export { authenticate };
