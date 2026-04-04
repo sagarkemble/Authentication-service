@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, type Date } from "mongoose";
 import bcrypt from "bcryptjs";
 import { de } from "zod/v4/locales";
 export interface IUser extends Document {
@@ -10,6 +10,7 @@ export interface IUser extends Document {
   verificationToken?: string;
   refreshToken?: string;
   resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -55,6 +56,7 @@ const userSchema = new mongoose.Schema({
   verificationToken: { type: String, select: false, default: null },
   refreshToken: { type: String, select: false, default: null },
   resetPasswordToken: { type: String, select: false, default: null },
+  resetPasswordExpires: { type: Date, select: false, default: null },
 });
 
 userSchema.pre("save", async function () {
