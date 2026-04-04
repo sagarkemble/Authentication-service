@@ -151,4 +151,9 @@ const logout = async function ({ userId }: { userId: string }) {
   await User.findOneAndUpdate({ _id: userId }, { refreshToken: null });
 };
 
-export { register, verifyEmail, login, refreshAccessToken, logout };
+const getMe = async function ({ userId }: { userId: string }) {
+  const user = await User.findById(userId);
+  return user;
+};
+
+export { register, verifyEmail, login, refreshAccessToken, logout, getMe };

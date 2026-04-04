@@ -26,4 +26,6 @@ authRouter.post(
 
 authRouter.post("/logout", validateDto(logoutDto), authController.logout);
 
+authRouter.get("/getme", authController.getMe);
+
 export default authRouter;
