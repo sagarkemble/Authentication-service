@@ -156,4 +156,10 @@ const getMe = async function ({ userId }: { userId: string }) {
   return user;
 };
 
+const forgotPassword = async function ({ email }: { email: string }) {
+  const user = User.findOne({ email });
+  if (!user) ApiError.unauthorized("Invalid email");
+  const { rawToken, hashedToken } = generateHashedToken();
+};
+
 export { register, verifyEmail, login, refreshAccessToken, logout, getMe };
