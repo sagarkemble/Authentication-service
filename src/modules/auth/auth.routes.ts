@@ -22,7 +22,12 @@ authRouter.post("/login", validateDto(loginDto), authController.login);
 
 authRouter.post("/refresh-access-token", authController.refreshAccessToken);
 
-authRouter.post("/logout", validateDto(logoutDto), authController.logout);
+authRouter.post(
+  "/logout",
+  validateDto(logoutDto),
+  authenticate,
+  authController.logout,
+);
 
 authRouter.get("/getme", authenticate, authController.getMe);
 
