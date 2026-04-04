@@ -44,6 +44,11 @@ const forgotPassword = async function (req: Request, res: Response) {
   );
 };
 
+const resetPassword = async function (req: Request, res: Response) {
+  await authService.resetPassword(req.body);
+  ApiResponse.ok(res, "Password reseted successfully");
+};
+
 export {
   register,
   verifyEmail,
@@ -52,4 +57,5 @@ export {
   logout,
   getMe,
   forgotPassword,
+  resetPassword,
 };

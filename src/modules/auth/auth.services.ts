@@ -171,13 +171,13 @@ const forgotPassword = async function ({ email }: { email: string }) {
 };
 
 const resetPassword = async function ({
-  resetPasswordToken,
-  newPassword,
+  token,
+  password,
 }: {
-  resetPasswordToken: string;
-  newPassword: string;
+  token: string;
+  password: string;
 }) {
-  const hashedToken = hashToken(resetPasswordToken);
+  const hashedToken = hashToken(token);
   const user = await User.findOne({
     resetPasswordToken: hashedToken,
     resetPasswordExpires: { $gt: Date.now() },
@@ -185,7 +185,7 @@ const resetPassword = async function ({
 
   if (!user) throw ApiError.badRequest("Invalid or expired reset token");
 
-  user.password = newPassword;
+  user.password = password;
   user.resetPasswordToken = null;
   user.resetPasswordExpires = null;
   await user.save();

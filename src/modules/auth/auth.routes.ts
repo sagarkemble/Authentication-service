@@ -7,6 +7,7 @@ import loginDto from "./dto/login.dto.js";
 import refreshAccessTokenDto from "./dto/refreshAcessToken.dto.js";
 import logoutDto from "./dto/logout.dto.js";
 import forgotPasswordDto from "./dto/forgotPassword.dot.js";
+import resetPasswordDto from "./dto/resetPassword.dto.js";
 
 const authRouter: Router = Router();
 
@@ -33,6 +34,11 @@ authRouter.post(
   "/forgot-password",
   validateDto(forgotPasswordDto),
   authController.forgotPassword,
+);
+authRouter.post(
+  "/reset-password",
+  validateDto(resetPasswordDto),
+  authController.resetPassword,
 );
 
 export default authRouter;
