@@ -9,13 +9,19 @@ const authenticate = async function (
   next: NextFunction,
 ) {
   let token;
+  let decoded: { id: string; role: string } | null = null;
 
   if (req.headers?.authorization?.startsWith("Bearer"))
     token = req.headers.authorization.split(" ")[1];
 
   if (!token) throw ApiError.unauthorized("Not authenticated");
 
-  const decoded = verifyAccessToken(token);
+  try {
+    decoded = verifyAccessToken(token) as { id: string; role: string };
+  } catch (error) {
+    throw ApiError.unauthorized("Invalid or expired token");
+  }
+
   // @ts-ignore
   const user = await User.findById(decoded.id);
 
