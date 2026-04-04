@@ -120,6 +120,7 @@ const login = async function ({
   return {
     ...userObj,
     refreshToken,
+    accessToken,
   };
 };
 
