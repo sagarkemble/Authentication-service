@@ -157,9 +157,24 @@ const getMe = async function ({ userId }: { userId: string }) {
 };
 
 const forgotPassword = async function ({ email }: { email: string }) {
-  const user = User.findOne({ email });
-  if (!user) ApiError.unauthorized("Invalid email");
+  const user = await User.findOne({ email });
+  if (!user) throw ApiError.unauthorized("Invalid email");
   const { rawToken, hashedToken } = generateHashedToken();
+  user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
+  await user.save();
+  await sendEmail(
+    email,
+    "Reset Your Password",
+    `Your password reset token is: ${rawToken}`,
+  );
 };
 
-export { register, verifyEmail, login, refreshAccessToken, logout, getMe };
+export {
+  register,
+  verifyEmail,
+  login,
+  refreshAccessToken,
+  logout,
+  getMe,
+  forgotPassword,
+};

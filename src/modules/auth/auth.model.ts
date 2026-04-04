@@ -1,4 +1,4 @@
-import mongoose, { Document, type Date } from "mongoose";
+import mongoose, { Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import { de } from "zod/v4/locales";
 export interface IUser extends Document {

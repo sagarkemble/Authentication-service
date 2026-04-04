@@ -36,4 +36,20 @@ const getMe = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "User data found successfully", userData);
 };
 
-export { register, verifyEmail, login, refreshAccessToken, logout, getMe };
+const forgotPassword = async function (req: Request, res: Response) {
+  await authService.forgotPassword(req.body);
+  ApiResponse.ok(
+    res,
+    "If a user with that email exists, a password reset link has been sent.",
+  );
+};
+
+export {
+  register,
+  verifyEmail,
+  login,
+  refreshAccessToken,
+  logout,
+  getMe,
+  forgotPassword,
+};

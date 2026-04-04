@@ -6,6 +6,7 @@ import verifyEmailDto from "./dto/verifyEmail.dto.js";
 import loginDto from "./dto/login.dto.js";
 import refreshAccessTokenDto from "./dto/refreshAcessToken.dto.js";
 import logoutDto from "./dto/logout.dto.js";
+import forgotPasswordDto from "./dto/forgotPassword.dot.js";
 
 const authRouter: Router = Router();
 
@@ -27,5 +28,11 @@ authRouter.post(
 authRouter.post("/logout", validateDto(logoutDto), authController.logout);
 
 authRouter.get("/getme", authController.getMe);
+
+authRouter.post(
+  "/forgot-password",
+  validateDto(forgotPasswordDto),
+  authController.forgotPassword,
+);
 
 export default authRouter;
