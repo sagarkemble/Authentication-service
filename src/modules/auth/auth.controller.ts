@@ -43,7 +43,8 @@ const refreshAccessToken = async function (req: Request, res: Response) {
 };
 
 const logout = async function (req: Request, res: Response) {
-  await authService.logout(req.body);
+  //@ts-ignore
+  await authService.logout(req.user.id);
   ApiResponse.ok(res, "User logged out successfully");
 };
 

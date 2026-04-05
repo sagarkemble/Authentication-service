@@ -143,7 +143,7 @@ const refreshAccessToken = async function (refreshToken: string) {
   return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
-const logout = async function ({ userId }: { userId: string }) {
+const logout = async function (userId: string) {
   await User.findOneAndUpdate({ _id: userId }, { refreshToken: null });
 };
 
