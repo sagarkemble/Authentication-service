@@ -2,7 +2,7 @@
   class="container"
   align="center"
 >
- <img src="https://ik.imagekit.io/lespresources/image.png" style="height:5rem"/>
+ <img src="https://ik.imagekit.io/lespresources/auth-service-logo.png" style="height:5rem"/>
 
 # Authentication Service
 
@@ -18,12 +18,13 @@
 <a href="#"><img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" alt="JWT"></a>
 <a href="#"><img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js"></a>
 <a href="#"><img src="https://img.shields.io/badge/Resend-000000?style=for-the-badge&logo=mailgun&logoColor=white" alt="Resend"></a>
+<a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white" alt="pnpm"></a>
 <a href="#"><img src="https://img.shields.io/badge/Commitlint-000000?style=for-the-badge&logo=git&logoColor=white" alt="Commitlint"></a>
 </p>
 
 # Auth Backend Service
 
-Production ready authentication service with JWT, refresh tokens, email verification, and secure cookie-based auth.
+A complete user authentication REST API built with TypeScript, Express, and MongoDB, implementing JWT authentication, refresh tokens, email verification, and secure cookie-based auth.
 
 ## Features
 
