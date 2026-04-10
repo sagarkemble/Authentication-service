@@ -54,11 +54,7 @@ const register = async function ({
   return safeUser;
 };
 
-const verifyEmail = async function ({
-  verificationToken,
-}: {
-  verificationToken: string;
-}) {
+const verifyEmail = async function (verificationToken: string) {
   if (!verificationToken.trim())
     throw ApiError.badRequest("Invalid or expired verification token");
   const hashedToken = hashToken(verificationToken);
