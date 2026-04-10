@@ -22,7 +22,13 @@ const login = async function (req: Request, res: Response) {
     sameSite: "strict",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-  ApiResponse.ok(res, "Login successful.", { ...userObj, accessToken });
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 15 * 60 * 1000,
+  });
+  ApiResponse.ok(res, "Login successful.", userObj);
 };
 
 const verifyEmail = async function (req: Request, res: Response) {

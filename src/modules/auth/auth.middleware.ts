@@ -11,8 +11,7 @@ const authenticate = async function (
   let token;
   let decoded: { id: string; role: string } | null = null;
 
-  if (req.headers?.authorization?.startsWith("Bearer"))
-    token = req.headers.authorization.split(" ")[1];
+  if (req.cookies?.accessToken) token = req.cookies.accessToken;
 
   if (!token) throw ApiError.unauthorized("Not authenticated");
 
