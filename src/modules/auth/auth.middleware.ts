@@ -22,14 +22,12 @@ const authenticate = async function (
     throw ApiError.unauthorized("Invalid or expired token");
   }
 
-  // @ts-ignore
   const user = await User.findById(decoded.id);
 
   if (!user) throw ApiError.unauthorized("User no longer exists");
 
-  // @ts-ignore
   req.user = {
-    id: user._id,
+    id: String(user._id),
     role: user.role,
     name: user.name,
     email: user.email,
