@@ -43,14 +43,12 @@ const refreshAccessToken = async function (req: Request, res: Response) {
 };
 
 const logout = async function (req: Request, res: Response) {
-  //@ts-ignore
-  await authService.logout(req.user.id);
+  await authService.logout(req.user!.id);
   ApiResponse.ok(res, "User logged out successfully");
 };
 
 const getMe = async function (req: Request, res: Response) {
-  //@ts-ignore
-  const userData = await authService.getMe(req.user.id);
+  const userData = await authService.getMe(req.user!.id);
   ApiResponse.ok(res, "User data found successfully", userData);
 };
 
