@@ -28,10 +28,10 @@ const login = async function (req: Request, res: Response) {
 const verifyEmail = async function (req: Request, res: Response) {
   if (!req.query.verificationToken)
     throw ApiError.badRequest("Verification token is required");
-  const userData = await authService.verifyEmail(
+  const result = await authService.verifyEmail(
     req.query.verificationToken as string,
   );
-  ApiResponse.ok(res, "Mail successfully verified", userData);
+  ApiResponse.html(res, result.html, result.type);
 };
 
 const refreshAccessToken = async function (req: Request, res: Response) {
