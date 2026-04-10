@@ -54,6 +54,16 @@ const refreshAccessToken = async function (req: Request, res: Response) {
 };
 
 const logout = async function (req: Request, res: Response) {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
   await authService.logout(req.user!.id);
   ApiResponse.ok(res, "User logged out successfully");
 };
