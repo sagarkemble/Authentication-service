@@ -3,8 +3,10 @@ import type { Express, Request, Response, NextFunction } from "express";
 import authRouter from "./modules/auth/auth.routes.js";
 import ApiError from "./common/utils/api-error.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const app: Express = express();
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
