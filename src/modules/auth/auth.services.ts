@@ -1,5 +1,5 @@
 import { string } from "zod";
-import sendEmail from "../../common/config/email.js";
+import sendEmail from "../../common/config/email.config.js";
 import ApiError from "../../common/utils/api-error.js";
 import {
   generateAccessToken,
