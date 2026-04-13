@@ -50,6 +50,11 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    avatar: {
+      type: String,
+      default:
+        "https://ik.imagekit.io/lespresources/auth-service-avatars/default-avtar-1233321123321123321.jpg",
+    },
     isVerified: {
       type: Boolean,
       default: false,
