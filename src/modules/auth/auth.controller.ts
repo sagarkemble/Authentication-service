@@ -1,4 +1,4 @@
-import { type Response, type Request } from "express";
+import { type Response, type Request, type NextFunction } from "express";
 import * as authService from "./auth.services.js";
 import ApiResponse from "../../common/utils/api-response.js";
 import ApiError from "../../common/utils/api-error.js";
@@ -86,6 +86,17 @@ const resetPassword = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "Password reseted successfully");
 };
 
+const changeAvatar = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const file = req.file;
+  const avatarUrl = await authService.changeAvatar(req);
+  if (!avatarUrl) return next(new Error("Something went wrong"));
+  ApiResponse.ok(res, "Avatar updated successfully", { avatarUrl });
+};
+
 export {
   register,
   verifyEmail,
@@ -95,4 +106,5 @@ export {
   getMe,
   forgotPassword,
   resetPassword,
+  changeAvatar,
 };

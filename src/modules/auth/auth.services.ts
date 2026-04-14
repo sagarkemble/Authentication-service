@@ -9,6 +9,10 @@ import {
   verifyRefreshToken,
 } from "../../common/utils/jwt.utils.js";
 import User from "./auth.model.js";
+import { imageKit } from "../../common/config/image-kit.config.js";
+import type ImageKit from "@imagekit/nodejs";
+import type { Uploadable } from "@imagekit/nodejs";
+import type { Request } from "express";
 
 const register = async function ({
   name,
@@ -378,6 +382,24 @@ const resetPassword = async function ({
   await user.save();
 };
 
+const changeAvatar = async function (req: Request) {
+  if (!req.file) throw ApiError.badRequest("PNG/JPEG file required");
+  const file = req.file;
+  const params: ImageKit.FileUploadParams = {
+    file: file.buffer.toString("base64"),
+    fileName: `avatar-${req.user?.id}`,
+    folder: "auth-service-avatars",
+    useUniqueFileName: false,
+  };
+  const response: ImageKit.FileUploadResponse =
+    await imageKit.files.upload(params);
+  const avatarUrl = response.url;
+  await User.findByIdAndUpdate(req.user?.id, {
+    avatar: avatarUrl,
+  });
+  return avatarUrl;
+};
+
 export {
   register,
   verifyEmail,
@@ -387,4 +409,5 @@ export {
   getMe,
   forgotPassword,
   resetPassword,
+  changeAvatar,
 };

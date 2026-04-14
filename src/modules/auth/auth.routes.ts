@@ -5,7 +5,7 @@ import * as authController from "./auth.controller.js";
 import loginDto from "./dto/login.dto.js";
 import forgotPasswordDto from "./dto/forgotPassword.dto.js";
 import resetPasswordDto from "./dto/resetPassword.dto.js";
-import { authenticate } from "./auth.middleware.js";
+import { authenticate, uploadAvatar } from "./auth.middleware.js";
 
 const authRouter: Router = Router();
 
@@ -25,10 +25,17 @@ authRouter.post(
   validateDto(forgotPasswordDto),
   authController.forgotPassword,
 );
+
 authRouter.post(
   "/reset-password",
   validateDto(resetPasswordDto),
   authController.resetPassword,
 );
 
+authRouter.patch(
+  "/change-avatar",
+  authenticate,
+  uploadAvatar,
+  authController.changeAvatar,
+);
 export default authRouter;

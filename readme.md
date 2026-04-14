@@ -146,8 +146,23 @@ Cookie: refreshToken=<refresh_token>
 
 ```http
 GET /auth/getme
-Authorization: Bearer <access_token>
+Cookie: accessToken=<access_token>
 ```
+
+#### Change Avatar (Protected) `/auth/change-avatar`
+
+```http
+PATCH /auth/change-avatar
+Cookie: accessToken=<access_token>
+Content-Type: multipart/form-data
+```
+
+**Request Body (form-data):**
+
+- `avatar` (file)
+  - Field name must be **avatar**
+  - Max file size: **2MB**
+  - Allowed formats: **image/png**, **image/jpeg**
 
 #### Logout (Protected) `/auth/logout`
 
