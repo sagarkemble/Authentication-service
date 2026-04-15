@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendEmail = async (to: string, subject: string, token: string) => {
   let baseUrl;
   if (process.env.NODE_ENV === "production")
-    baseUrl = "https://authentication-service-m7q3.onrender.com";
+    baseUrl = process.env.SERVER_BASE_URL;
   else baseUrl = "http://localhost:3000";
 
   const link = `${baseUrl}/auth/verify-mail?verificationToken=${token}`;

@@ -389,10 +389,11 @@ const changeAvatar = async function (req: Request) {
     file: file.buffer.toString("base64"),
     fileName: `avatar-${req.user?.id}`,
     folder: "auth-service-avatars",
-    useUniqueFileName: false,
   };
   const response: ImageKit.FileUploadResponse =
     await imageKit.files.upload(params);
+  console.log(response);
+
   const avatarUrl = response.url;
   await User.findByIdAndUpdate(req.user?.id, {
     avatar: avatarUrl,
