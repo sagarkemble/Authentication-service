@@ -1,12 +1,17 @@
 import mongoose, { Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import { de } from "zod/v4/locales";
+import { file } from "zod";
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
   role: "user" | "admin";
   isVerified: boolean;
+  avatar: {
+    url: string;
+    fileId: string | null;
+  };
   verificationToken?: string | null;
   refreshToken?: string | null;
   resetPasswordToken?: string | null;
@@ -51,9 +56,15 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     avatar: {
-      type: String,
-      default:
-        "https://ik.imagekit.io/lespresources/auth-service-avatars/default-avtar-1233321123321123321.jpg",
+      url: {
+        type: String,
+        default:
+          "https://ik.imagekit.io/lespresources/auth-service-avatars/default-avtar-1233321123321123321.jpg",
+      },
+      fileId: {
+        type: String,
+        default: null,
+      },
     },
     isVerified: {
       type: Boolean,

@@ -390,15 +390,16 @@ const changeAvatar = async function (req: Request) {
     fileName: `avatar-${req.user?.id}`,
     folder: "auth-service-avatars",
   };
-  const response: ImageKit.FileUploadResponse =
+  const avatar: ImageKit.FileUploadResponse =
     await imageKit.files.upload(params);
-  console.log(response);
 
-  const avatarUrl = response.url;
-  await User.findByIdAndUpdate(req.user?.id, {
-    avatar: avatarUrl,
-  });
-  return avatarUrl;
+  const user = await User.findById(req.user?.id);
+  if (user!.avatar.fileId)
+    await imageKit.files.delete(user?.avatar.fileId as string);
+  user!.avatar = { url: avatar.url as string, fileId: avatar.fileId as string };
+
+  await user!.save();
+  return avatar.url;
 };
 
 export {
