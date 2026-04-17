@@ -189,8 +189,7 @@ POST /auth/reset-password
 Content-Type: application/json
 
 {
-  "token": "reset_token_from_email",
-  "newPassword": "yournewpassword"
+  "email": "user@example.com"
 }
 ```
 
