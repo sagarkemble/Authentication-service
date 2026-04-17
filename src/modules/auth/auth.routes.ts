@@ -11,7 +11,10 @@ const authRouter: Router = Router();
 
 authRouter.post("/register", validateDto(RegisterDto), authController.register);
 
-authRouter.get("/verify-mail", authController.verifyEmail);
+authRouter.post("/verify-email", authController.verifyEmail);
+
+authRouter.get("/verify-email", authController.sendVerifyEmailHtml);
+
 authRouter.post("/login", validateDto(loginDto), authController.login);
 
 authRouter.post("/refresh-access-token", authController.refreshAccessToken);
@@ -38,4 +41,5 @@ authRouter.patch(
   uploadAvatar,
   authController.changeAvatar,
 );
+
 export default authRouter;

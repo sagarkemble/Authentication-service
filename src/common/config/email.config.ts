@@ -162,4 +162,4 @@ text-decoration: none
   });
 };
 
-export default sendEmail;
+export default resend;

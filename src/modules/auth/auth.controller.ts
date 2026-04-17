@@ -2,6 +2,7 @@ import { type Response, type Request, type NextFunction } from "express";
 import * as authService from "./auth.services.js";
 import ApiResponse from "../../common/utils/api-response.js";
 import ApiError from "../../common/utils/api-error.js";
+import path from "path";
 
 const register = async function (req: Request, res: Response) {
   const userData = await authService.register(req.body);
@@ -32,12 +33,22 @@ const login = async function (req: Request, res: Response) {
 };
 
 const verifyEmail = async function (req: Request, res: Response) {
-  if (!req.query.verificationToken)
+  if (!req.body.token)
     throw ApiError.badRequest("Verification token is required");
-  const result = await authService.verifyEmail(
-    req.query.verificationToken as string,
+  await authService.verifyEmail(req.body.token);
+  ApiResponse.ok(res, "Email verified successfully");
+};
+
+export const sendVerifyEmailHtml = async function (
+  req: Request,
+  res: Response,
+) {
+  res.sendFile(
+    path.join(
+      process.cwd(),
+      "src/modules/auth/templates/pages/verify-mail.html",
+    ),
   );
-  ApiResponse.html(res, result.html, result.type);
 };
 
 const refreshAccessToken = async function (req: Request, res: Response) {
