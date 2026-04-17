@@ -39,10 +39,7 @@ const verifyEmail = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "Email verified successfully");
 };
 
-export const sendVerifyEmailHtml = async function (
-  req: Request,
-  res: Response,
-) {
+const sendVerifyEmailHtml = async function (req: Request, res: Response) {
   res.sendFile(
     path.join(
       process.cwd(),
@@ -92,9 +89,26 @@ const forgotPassword = async function (req: Request, res: Response) {
   );
 };
 
-const resetPassword = async function (req: Request, res: Response) {
-  await authService.resetPassword(req.body);
+const sendForgotPasswordHtml = async function (req: Request, res: Response) {
+  res.sendFile(
+    path.join(
+      process.cwd(),
+      "src/modules/auth/templates/pages/change-password.html",
+    ),
+  );
+};
+
+const changePassword = async function (req: Request, res: Response) {
+  await authService.changePassword(req.body.token, req.body.password);
   ApiResponse.ok(res, "Password reseted successfully");
+};
+
+const resetPassword = async function (req: Request, res: Response) {
+  await authService.forgotPassword(req.body);
+  ApiResponse.ok(
+    res,
+    "If a user with that email exists, a password reset link has been sent.",
+  );
 };
 
 const changeAvatar = async function (
@@ -118,4 +132,7 @@ export {
   forgotPassword,
   resetPassword,
   changeAvatar,
+  sendForgotPasswordHtml,
+  sendVerifyEmailHtml,
+  changePassword,
 };

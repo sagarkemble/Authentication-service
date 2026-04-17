@@ -1,4 +1,3 @@
-import { string } from "zod";
 import ApiError from "../../common/utils/api-error.js";
 import {
   generateAccessToken,
@@ -10,9 +9,11 @@ import {
 import User from "./auth.model.js";
 import { imageKit } from "../../common/config/image-kit.config.js";
 import type ImageKit from "@imagekit/nodejs";
-import type { Uploadable } from "@imagekit/nodejs";
 import type { Request } from "express";
-import { sendVerificationMail } from "./auth.email.service.js";
+import {
+  sendChangePasswordMail,
+  sendVerificationMail,
+} from "./auth.email.service.js";
 
 const register = async function ({
   name,
@@ -52,24 +53,6 @@ const register = async function ({
   } = user.toObject();
 
   return safeUser;
-};
-
-const verifyEmail = async function (verificationToken: string) {
-  if (!verificationToken.trim())
-    throw ApiError.badRequest("Invalid or expired verification token");
-  const hashedToken = hashToken(verificationToken);
-  const user = await User.findOne({
-    verificationToken: hashedToken,
-  });
-
-  if (!user) {
-    throw ApiError.badRequest("Invalid or expired verification token");
-  }
-
-  await User.findByIdAndUpdate(user._id, {
-    $set: { isVerified: true },
-    $unset: { verificationToken: 1 },
-  });
 };
 
 const login = async function ({
@@ -112,6 +95,24 @@ const login = async function ({
   };
 };
 
+const verifyEmail = async function (verificationToken: string) {
+  if (!verificationToken.trim())
+    throw ApiError.badRequest("Invalid or expired verification token");
+  const hashedToken = hashToken(verificationToken);
+  const user = await User.findOne({
+    verificationToken: hashedToken,
+  });
+
+  if (!user) {
+    throw ApiError.badRequest("Invalid or expired verification token");
+  }
+
+  await User.findByIdAndUpdate(user._id, {
+    $set: { isVerified: true },
+    $unset: { verificationToken: 1 },
+  });
+};
+
 const refreshAccessToken = async function (refreshToken: string) {
   const decoded = verifyRefreshToken(refreshToken) as { id: string };
   const user = await User.findById(decoded.id).select("+refreshToken");
@@ -147,20 +148,10 @@ const forgotPassword = async function ({ email }: { email: string }) {
   user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
   user.resetPasswordToken = hashedToken;
   await user.save();
-  // await sendEmail(
-  //   email,
-  //   "Reset Your Password",
-  //   `Your password reset token is: ${rawToken}`,
-  // );
+  await sendChangePasswordMail(email, rawToken);
 };
 
-const resetPassword = async function ({
-  token,
-  password,
-}: {
-  token: string;
-  password: string;
-}) {
+const changePassword = async function (token: string, password: string) {
   const hashedToken = hashToken(token);
   const user = await User.findOne({
     resetPasswordToken: hashedToken,
@@ -168,7 +159,6 @@ const resetPassword = async function ({
   }).select("+resetPasswordToken +resetPasswordExpires");
 
   if (!user) throw ApiError.badRequest("Invalid or expired reset token");
-
   user.password = password;
   user.resetPasswordToken = null;
   user.resetPasswordExpires = null;
@@ -203,6 +193,6 @@ export {
   logout,
   getMe,
   forgotPassword,
-  resetPassword,
   changeAvatar,
+  changePassword,
 };
