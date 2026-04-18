@@ -4,6 +4,7 @@ import authRouter from "./modules/auth/auth.routes.js";
 import ApiError from "./common/utils/api-error.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import ApiResponse from "./common/utils/api-response.js";
 
 const app: Express = express();
 app.use(cors());
@@ -12,6 +13,10 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
+
+app.get("/health", (req, res) => {
+  ApiResponse.ok(res, "Server is healthy");
+});
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (error instanceof ApiError) {
