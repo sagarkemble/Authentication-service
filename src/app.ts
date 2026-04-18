@@ -7,7 +7,12 @@ import cors from "cors";
 import ApiResponse from "./common/utils/api-response.js";
 
 const app: Express = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(",") || [],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
