@@ -55,7 +55,7 @@ const refreshAccessToken = async function (req: Request, res: Response) {
   res.cookie("refreshToken", newRefreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   ApiResponse.ok(res, "Access Token Refreshed", { accessToken });
@@ -65,12 +65,12 @@ const logout = async function (req: Request, res: Response) {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
   });
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
   });
   await authService.logout(req.user!.id);
   ApiResponse.ok(res, "User logged out successfully");
