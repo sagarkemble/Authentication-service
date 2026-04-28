@@ -7,15 +7,23 @@
     "dev": "clear && bun --watch ./src",
     "build": "bun build ./src/ --outdir ./dist",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "studio": "drizzle-kit studio",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.2",
     "@commitlint/config-conventional": "^20.5.0",
     "@types/bun": "latest",
+    "@types/pg": "^8.20.0",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
-    "husky": "^8.0.0"
+    "drizzle-kit": "^0.31.10",
+    "husky": "^8.0.0",
+    "tsx": "^4.21.0"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -23,6 +31,13 @@
   "dependencies": {
     "@types/express": "^5.0.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "pg": "^8.20.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
