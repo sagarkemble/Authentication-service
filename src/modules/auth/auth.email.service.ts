@@ -15,6 +15,19 @@ const verificationTemplate = await fs.readFile(
   "utf-8",
 );
 
+const forgotPasswordTemplatePath = path.resolve(
+  "src",
+  "modules",
+  "auth",
+  "templates",
+  "email",
+  "forgot-password.html",
+);
+const forgotPasswordTemplate = await fs.readFile(
+  forgotPasswordTemplatePath,
+  "utf-8",
+);
+
 const sendVerificationEmail = async function (to: string, token: string) {
   const verificationLink = `${process.env.SERVER_URL}/auth/verify-email?token=${token}&email=${to}`;
   const emailContent = verificationTemplate.replace("{link}", verificationLink);
@@ -26,4 +39,15 @@ const sendVerificationEmail = async function (to: string, token: string) {
   });
 };
 
-export { sendVerificationEmail };
+const sendForgotPasswordEmail = async function (to: string, token: string) {
+  const resetLink = `${process.env.SERVER_URL}/auth/reset-password?token=${token}&email=${to}`;
+  const emailContent = forgotPasswordTemplate.replace("{link}", resetLink);
+  await resend.emails.send({
+    from: process.env.FROM_EMAIL!,
+    to,
+    subject: "Reset your password",
+    html: emailContent,
+  });
+};
+
+export { sendVerificationEmail, sendForgotPasswordEmail };

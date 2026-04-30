@@ -11,13 +11,10 @@ const authenticate = async function (
   next: NextFunction,
 ) {
   const header = req.headers.authorization;
-  console.log(header);
-
   if (!header || !header.startsWith("Bearer "))
     throw ApiError.badRequest("Invalid authorization header format");
 
   const token = header.split(" ")[1];
-  console.log(header);
   if (!token) throw ApiError.badRequest("Token is required");
   const decoded = verifyJwtToken(token) as { userId: string; email: string };
   const [user] = await db

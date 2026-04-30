@@ -7,7 +7,10 @@ import {
   generateHashedToken,
   hashContent,
 } from "../../common/utils/hash.utils";
-import { sendVerificationEmail } from "./auth.email.service";
+import {
+  sendForgotPasswordEmail,
+  sendVerificationEmail,
+} from "./auth.email.service";
 import { generateJwtToken, verifyJwtToken } from "../../common/utils/jwt.utils";
 
 const registerUser = async function (
@@ -135,4 +138,55 @@ const refreshToken = async function (token: string) {
   };
 };
 
-export { registerUser, verifyEmail, login, logout, refreshToken };
+const forgotPassword = async function (email: string) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+  if (!user) throw ApiError.notFound("User not found");
+  const { token, hashedToken } = await generateHashedToken();
+  await db
+    .update(usersTable)
+    .set({
+      passwordResetTokenExpiresAt: new Date(Date.now() + 15 * 60 * 1000),
+      passwordResetToken: hashedToken,
+    })
+    .where(eq(usersTable.email, email));
+  await sendForgotPasswordEmail(email, token);
+};
+
+const resetPassword = async function (
+  token: string,
+  email: string,
+  newPassword: string,
+) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+
+  if (!user || !user.passwordResetToken) {
+    throw ApiError.badRequest("Invalid or expired token");
+  }
+  const isValid = await compareHash(token, user.passwordResetToken);
+  if (!isValid) throw ApiError.badRequest("Invalid or expired token");
+  const hashedPassword = await hashContent(newPassword);
+  await db
+    .update(usersTable)
+    .set({
+      password: hashedPassword,
+      passwordResetToken: null,
+      passwordResetTokenExpiresAt: null,
+    })
+    .where(eq(usersTable.email, email));
+};
+
+export {
+  registerUser,
+  verifyEmail,
+  login,
+  logout,
+  refreshToken,
+  forgotPassword,
+  resetPassword,
+};
