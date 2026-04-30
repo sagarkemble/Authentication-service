@@ -17,6 +17,12 @@ const registerUser = async function (req: Request, res: Response) {
   );
 };
 
+const verifyEmail = async function (req: Request, res: Response) {
+  const { token, email } = req.body;
+  await AuthService.verifyEmail(token, email);
+  ApiResponse.ok(res, "Email verified successfully.");
+};
+
 const getVerifyEmail = async function (req: Request, res: Response) {
   {
     const emailHtmlPath = path.resolve(
@@ -30,4 +36,4 @@ const getVerifyEmail = async function (req: Request, res: Response) {
     ApiResponse.html(res, emailHtmlPath, "success");
   }
 };
-export { registerUser, getVerifyEmail };
+export { registerUser, getVerifyEmail, verifyEmail };

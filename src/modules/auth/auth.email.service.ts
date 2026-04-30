@@ -16,7 +16,7 @@ const verificationTemplate = await fs.readFile(
 );
 
 const sendVerificationEmail = async function (to: string, token: string) {
-  const verificationLink = `${process.env.SERVER_URL}/auth/verify-email?token=${token}`;
+  const verificationLink = `${process.env.SERVER_URL}/auth/verify-email?token=${token}&email=${to}`;
   const emailContent = verificationTemplate.replace("{link}", verificationLink);
   await resend.emails.send({
     from: process.env.FROM_EMAIL!,

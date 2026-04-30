@@ -9,4 +9,7 @@ const generateHashedToken = async function () {
   const hashedToken = await bcrypt.hash(token, 12);
   return { token, hashedToken };
 };
-export { hashContent, generateHashedToken };
+const compareHash = async function (hash1: string, hash2: string) {
+  return await bcrypt.compare(hash1, hash2);
+};
+export { hashContent, generateHashedToken, compareHash };

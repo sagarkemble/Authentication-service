@@ -3,6 +3,7 @@ import db from "../../common/config/db.config";
 import usersTable from "./auth.model";
 import ApiError from "../../common/utils/api-error.utils";
 import {
+  compareHash,
   generateHashedToken,
   hashContent,
 } from "../../common/utils/hash.utils";
@@ -44,4 +45,21 @@ const registerUser = async function (
   };
 };
 
-export { registerUser };
+const verifyEmail = async function (token: string, email: string) {
+  const hashedToken = await hashContent(token);
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+  if (!user || !user.emailVerificationToken)
+    throw ApiError.badRequest("Invalid or expired token");
+  const isValid = await compareHash(token, user.emailVerificationToken);
+
+  if (!isValid) throw ApiError.badRequest("Invalid or expired token");
+  await db
+    .update(usersTable)
+    .set({ isVerified: true, emailVerificationToken: null })
+    .where(eq(usersTable.email, email));
+};
+
+export { registerUser, verifyEmail };

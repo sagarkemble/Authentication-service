@@ -215,6 +215,7 @@
       // Get token from URL
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get("token");
+      const email = urlParams.get("email");
 
       // DOM elements
       const loadingState = document.getElementById("loadingState");
@@ -240,10 +241,10 @@
       // Verify email on page load
       async function verifyEmail() {
         // Check if token exists
-        if (!token) {
+        if (!token || !email) {
           showState("error");
           errorMessage.textContent =
-            "No verification token provided. Please check your email for the verification link.";
+            "No verification token or email provided. Please check your email for the verification link.";
           return;
         }
 
@@ -254,7 +255,7 @@
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ token }),
+            body: JSON.stringify({ token, email }),
           });
 
           const data = await response.json();
