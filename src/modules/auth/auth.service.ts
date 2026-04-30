@@ -181,6 +181,25 @@ const resetPassword = async function (
     .where(eq(usersTable.email, email));
 };
 
+const changePassword = async function (
+  userId: string,
+  oldPassword: string,
+  newPassword: string,
+) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
+  if (!user) throw ApiError.notFound("User not found");
+  const isOldPasswordValid = await compareHash(oldPassword, user.password);
+  if (!isOldPasswordValid) throw ApiError.unauthorized("Invalid old password");
+  const hashedPassword = await hashContent(newPassword);
+  await db
+    .update(usersTable)
+    .set({ password: hashedPassword })
+    .where(eq(usersTable.id, userId));
+};
+
 export {
   registerUser,
   verifyEmail,
@@ -189,4 +208,5 @@ export {
   refreshToken,
   forgotPassword,
   resetPassword,
+  changePassword,
 };

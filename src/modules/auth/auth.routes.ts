@@ -8,6 +8,7 @@ import { authenticate } from "./auth.middleware";
 import forgetPasswordDto from "./dto/forgot-password.dto";
 import forgotPasswordDto from "./dto/forgot-password.dto";
 import resetPasswordDto from "./dto/reset-password.dto";
+import changePasswordDto from "./dto/change-password.dto";
 
 export const authRouter = router();
 authRouter.post(
@@ -35,4 +36,11 @@ authRouter.post(
   "/reset-password",
   validateDto(resetPasswordDto),
   authController.resetPassword,
+);
+
+authRouter.post(
+  "/change-password",
+  validateDto(changePasswordDto),
+  authenticate,
+  authController.changePassword,
 );

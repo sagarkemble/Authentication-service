@@ -108,6 +108,13 @@ const resetPassword = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "Password reset successful");
 };
 
+const changePassword = async function (req: Request, res: Response) {
+  const userId = req.user!.id;
+  const { oldPassword, newPassword } = req.body;
+  await AuthService.changePassword(userId, oldPassword, newPassword);
+  ApiResponse.ok(res, "Password changed successfully");
+};
+
 export {
   registerUser,
   getVerifyEmail,
@@ -118,4 +125,5 @@ export {
   forgotPassword,
   getResetPassword,
   resetPassword,
+  changePassword,
 };
