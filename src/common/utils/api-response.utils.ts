@@ -18,10 +18,14 @@ class ApiResponse {
       data,
     });
   }
-  static html(res: Response, html: string, type: string) {
+  static html(
+    res: Response,
+    html: string,
+    type: "error" | "success" = "success",
+  ) {
     res.setHeader("Content-Type", "text/html");
     if (type === "error") return res.status(400).send(html);
-    else return res.status(200).send(html);
+    else return res.status(200).sendFile(html);
   }
 }
 export default ApiResponse;

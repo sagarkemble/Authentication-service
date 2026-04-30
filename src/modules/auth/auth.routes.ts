@@ -9,3 +9,4 @@ authRouter.post(
   validateDto(registerDto),
   authController.registerUser,
 );
+authRouter.get("/verify-email", authController.getVerifyEmail);

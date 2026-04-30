@@ -1,0 +1,284 @@
+<!-- src/modules/auth/templates/pages/verify-email.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f5f5f3;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .card {
+        background: #ffffff;
+        border: 0.5px solid rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        padding: 3rem 2.5rem;
+        text-align: center;
+        max-width: 380px;
+        width: 90%;
+      }
+
+      .icon-wrap {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+      }
+
+      .icon-wrap.loading {
+        background: #e8e8e8;
+      }
+
+      .icon-wrap.success {
+        background: #eaf3de;
+      }
+
+      .icon-wrap.error {
+        background: #fcebeb;
+      }
+
+      .icon-wrap svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid #e0e0e0;
+        border-top-color: #666;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      h1 {
+        font-size: 20px;
+        font-weight: 500;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+      }
+
+      p {
+        font-size: 15px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a1a;
+        background: transparent;
+        border: 0.5px solid rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        padding: 10px 24px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.15s;
+      }
+
+      .btn:hover {
+        background: #f5f5f3;
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #1a1a18;
+        }
+        .card {
+          background: #242422;
+          border-color: rgba(255, 255, 255, 0.1);
+        }
+        h1 {
+          color: #f0f0ee;
+        }
+        p {
+          color: #999;
+        }
+        .icon-wrap.loading {
+          background: #2e2e2c;
+        }
+        .icon-wrap.success {
+          background: #2a3d1e;
+        }
+        .icon-wrap.error {
+          background: #3d1f1f;
+        }
+        .btn {
+          color: #f0f0ee;
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+        .btn:hover {
+          background: #2e2e2c;
+        }
+        .spinner {
+          border-color: #444;
+          border-top-color: #999;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <!-- Loading State -->
+      <div id="loadingState">
+        <div class="icon-wrap loading">
+          <div class="spinner"></div>
+        </div>
+        <h1>Verifying your email...</h1>
+        <p>Please wait while we verify your email address.</p>
+      </div>
+
+      <!-- Success State -->
+      <div id="successState" class="hidden">
+        <div class="icon-wrap success">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 13l4 4L19 7"
+              stroke="#3B6D11"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <h1>Email verified</h1>
+        <p>
+          Your email address has been successfully verified. You're all set.
+        </p>
+        <a href="/login" class="btn">Continue to Login</a>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="hidden">
+        <div class="icon-wrap error">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 8v4m0 4h.01M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
+              stroke="#A32D2D"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <h1>Invalid or expired token</h1>
+        <p id="errorMessage">
+          This verification link is no longer valid. It may have expired or
+          already been used. Request a new one to continue.
+        </p>
+        <a href="/resend-verification" class="btn">Resend email</a>
+      </div>
+    </div>
+
+    <script>
+      // Get token from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+
+      // DOM elements
+      const loadingState = document.getElementById("loadingState");
+      const successState = document.getElementById("successState");
+      const errorState = document.getElementById("errorState");
+      const errorMessage = document.getElementById("errorMessage");
+
+      // Function to show state
+      function showState(state) {
+        loadingState.classList.add("hidden");
+        successState.classList.add("hidden");
+        errorState.classList.add("hidden");
+
+        if (state === "success") {
+          successState.classList.remove("hidden");
+        } else if (state === "error") {
+          errorState.classList.remove("hidden");
+        } else {
+          loadingState.classList.remove("hidden");
+        }
+      }
+
+      // Verify email on page load
+      async function verifyEmail() {
+        // Check if token exists
+        if (!token) {
+          showState("error");
+          errorMessage.textContent =
+            "No verification token provided. Please check your email for the verification link.";
+          return;
+        }
+
+        try {
+          // Send POST request to verify endpoint
+          const response = await fetch("/auth/verify-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            // Show success state
+            showState("success");
+          } else {
+            // Show error state
+            showState("error");
+            errorMessage.textContent =
+              data.message ||
+              "This verification link is no longer valid. It may have expired or already been used.";
+          }
+        } catch (error) {
+          console.error("Verification error:", error);
+          showState("error");
+          errorMessage.textContent =
+            "An error occurred while verifying your email. Please try again later.";
+        }
+      }
+
+      // Run verification when page loads
+      verifyEmail();
+    </script>
+  </body>
+</html>
