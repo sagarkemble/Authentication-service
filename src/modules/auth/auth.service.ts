@@ -8,7 +8,7 @@ import {
   hashContent,
 } from "../../common/utils/hash.utils";
 import { sendVerificationEmail } from "./auth.email.service";
-import { string } from "zod";
+import { generateJwtToken } from "../../common/utils/jwt.utils";
 
 const registerUser = async function (
   firstName: string,
@@ -69,4 +69,31 @@ const verifyEmail = async function (token: string, email: string) {
     .where(eq(usersTable.email, email));
 };
 
-export { registerUser, verifyEmail };
+const login = async function name(email: string, password: string) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+  if (!user) throw ApiError.notFound("User not found");
+  if (!user.isVerified) throw ApiError.unauthorized("Email not verified");
+  const isPasswordValid = await compareHash(password, user.password);
+  if (!isPasswordValid) throw ApiError.unauthorized("Invalid credentials");
+  await db;
+  const refreshToken = await generateJwtToken({
+    userId: user.id,
+    email: user.email,
+  });
+  const accessToken = await generateJwtToken({
+    userId: user.id,
+    email: user.email,
+  });
+  return {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    refreshToken,
+    accessToken,
+  };
+};
+
+export { registerUser, verifyEmail, login };

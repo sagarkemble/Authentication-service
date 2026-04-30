@@ -36,4 +36,17 @@ const getVerifyEmail = async function (req: Request, res: Response) {
     ApiResponse.html(res, emailHtmlPath, "success");
   }
 };
-export { registerUser, getVerifyEmail, verifyEmail };
+
+const login = async function (req: Request, res: Response) {
+  const { email, password } = req.body;
+  const userData = await AuthService.login(email, password);
+  res.cookie("refreshToken", userData.refreshToken, {
+    httpOnly: true,
+    secure: process.env.ENV === "production",
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  const { refreshToken, ...safeUserData } = userData;
+  ApiResponse.ok(res, "Login successful", safeUserData);
+};
+export { registerUser, getVerifyEmail, verifyEmail, login };
