@@ -9,5 +9,4 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
 app.use("/auth", authRouter);
-
 app.use(globalErrorHandler);
