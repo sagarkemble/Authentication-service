@@ -8,6 +8,7 @@ import {
   hashContent,
 } from "../../common/utils/hash.utils";
 import { sendVerificationEmail } from "./auth.email.service";
+import { string } from "zod";
 
 const registerUser = async function (
   firstName: string,
@@ -24,6 +25,7 @@ const registerUser = async function (
 
   const hashedPassword = await hashContent(password);
   const { token, hashedToken } = await generateHashedToken();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
   const [user] = await db
     .insert(usersTable)
     .values({
@@ -32,6 +34,7 @@ const registerUser = async function (
       email,
       password: hashedPassword,
       emailVerificationToken: hashedToken,
+      emailVerificationTokenExpiresAt: expiresAt,
     })
     .returning();
 
@@ -51,7 +54,11 @@ const verifyEmail = async function (token: string, email: string) {
     .select()
     .from(usersTable)
     .where(eq(usersTable.email, email));
-  if (!user || !user.emailVerificationToken)
+  if (
+    !user ||
+    !user.emailVerificationToken ||
+    Date.now() > Number(user.emailVerificationTokenExpiresAt)
+  )
     throw ApiError.badRequest("Invalid or expired token");
   const isValid = await compareHash(token, user.emailVerificationToken);
 
