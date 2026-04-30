@@ -14,7 +14,7 @@ function globalErrorHandler(
         code: err.code,
         message: err.message,
         status: err.statusCode,
-        details: err.detail ?? [],
+        details: err.details ?? [],
       },
     });
   }

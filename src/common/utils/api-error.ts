@@ -1,7 +1,7 @@
 class ApiError extends Error {
   code: string;
   statusCode: number;
-  detail: Array<unknown>;
+  details: Array<unknown>;
   constructor(
     code: string,
     message: string,
@@ -11,7 +11,7 @@ class ApiError extends Error {
     super(message);
     this.code = code;
     this.statusCode = statusCode;
-    this.detail = detail;
+    this.details = detail;
     Error.captureStackTrace(this, this.constructor);
   }
   static badRequest(message: string, details: Array<unknown> = []) {
