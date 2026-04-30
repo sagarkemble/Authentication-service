@@ -1,5 +1,5 @@
 import z from "zod";
-import ApiError from "../utils/api-error.js";
+import ApiError from "../utils/api-error.utils.js";
 import type { Request } from "express";
 
 class BaseDto {

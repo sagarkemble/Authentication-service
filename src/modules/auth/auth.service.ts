@@ -1,8 +1,11 @@
 import { eq } from "drizzle-orm";
 import db from "../../common/config/db.config";
 import usersTable from "./auth.model";
-import ApiError from "../../common/utils/api-error";
-import { generateHashedToken, hashContent } from "../../common/utils/hash";
+import ApiError from "../../common/utils/api-error.utils";
+import {
+  generateHashedToken,
+  hashContent,
+} from "../../common/utils/hash.utils";
 import { sendVerificationEmail } from "./auth.email.service";
 
 const registerUser = async function (
