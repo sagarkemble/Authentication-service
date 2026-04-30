@@ -4,6 +4,7 @@ import registerDto from "./dto/register.dto";
 import * as authController from "./auth.controller";
 import loginDto from "./dto/login.dto";
 import verifyEmailDto from "./dto/verify-email.dto";
+import { authenticate } from "./auth.middleware";
 
 export const authRouter = router();
 authRouter.post(
@@ -18,3 +19,4 @@ authRouter.post(
   authController.verifyEmail,
 );
 authRouter.get("/verify-email", authController.getVerifyEmail);
+authRouter.post("/logout", authenticate, authController.logout);

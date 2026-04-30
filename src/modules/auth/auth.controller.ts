@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import * as AuthService from "./auth.service";
 import ApiResponse from "../../common/utils/api-response.utils";
 import path from "path";
+import ApiError from "../../common/utils/api-error.utils";
 const registerUser = async function (req: Request, res: Response) {
   const { firstName, lastName, email, password } = req.body;
   const userData = await AuthService.registerUser(
@@ -49,4 +50,18 @@ const login = async function (req: Request, res: Response) {
   const { refreshToken, ...safeUserData } = userData;
   ApiResponse.ok(res, "Login successful", safeUserData);
 };
-export { registerUser, getVerifyEmail, verifyEmail, login };
+
+const logout = async function (req: Request, res: Response) {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken)
+    return ApiError.badRequest("Refresh token is required for logout");
+  await AuthService.logout(refreshToken);
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.ENV === "production",
+    sameSite: "none",
+  });
+  ApiResponse.ok(res, "Logout successful");
+};
+
+export { registerUser, getVerifyEmail, verifyEmail, login, logout };

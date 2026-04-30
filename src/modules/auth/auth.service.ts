@@ -96,4 +96,12 @@ const login = async function name(email: string, password: string) {
   };
 };
 
-export { registerUser, verifyEmail, login };
+const logout = async function (refreshToken: string) {
+  const decoded = await generateJwtToken({ token: refreshToken });
+  await db
+    .update(usersTable)
+    .set({ refreshToken: null })
+    .where(eq(usersTable.refreshToken, refreshToken));
+};
+
+export { registerUser, verifyEmail, login, logout };
