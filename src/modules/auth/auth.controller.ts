@@ -64,4 +64,30 @@ const logout = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "Logout successful");
 };
 
-export { registerUser, getVerifyEmail, verifyEmail, login, logout };
+const refreshToken = async function (req: Request, res: Response) {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken)
+    throw ApiError.badRequest(
+      "Refresh token is required to refresh access token",
+    );
+  const { refreshToken: newRefreshToken, accessToken } =
+    await AuthService.refreshToken(refreshToken);
+
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+    secure: process.env.ENV === "production",
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  ApiResponse.ok(res, "Access token refreshed successfully", { accessToken });
+};
+
+export {
+  registerUser,
+  getVerifyEmail,
+  verifyEmail,
+  login,
+  logout,
+  refreshToken,
+};

@@ -20,3 +20,4 @@ authRouter.post(
 );
 authRouter.get("/verify-email", authController.getVerifyEmail);
 authRouter.post("/logout", authenticate, authController.logout);
+authRouter.post("/refresh-token", authController.refreshToken);

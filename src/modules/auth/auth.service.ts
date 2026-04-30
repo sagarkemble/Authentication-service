@@ -8,7 +8,7 @@ import {
   hashContent,
 } from "../../common/utils/hash.utils";
 import { sendVerificationEmail } from "./auth.email.service";
-import { generateJwtToken } from "../../common/utils/jwt.utils";
+import { generateJwtToken, verifyJwtToken } from "../../common/utils/jwt.utils";
 
 const registerUser = async function (
   firstName: string,
@@ -97,11 +97,42 @@ const login = async function name(email: string, password: string) {
 };
 
 const logout = async function (refreshToken: string) {
-  const decoded = await generateJwtToken({ token: refreshToken });
   await db
     .update(usersTable)
     .set({ refreshToken: null })
     .where(eq(usersTable.refreshToken, refreshToken));
 };
+const refreshToken = async function (token: string) {
+  const decoded = (await verifyJwtToken(token)) as {
+    userId: string;
+    email: string;
+  };
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, decoded.userId));
+  if (!user || !user.refreshToken)
+    throw ApiError.unauthorized("Invalid refresh token");
 
-export { registerUser, verifyEmail, login, logout };
+  const isValid = await compareHash(token, user.refreshToken!);
+  if (!isValid) throw ApiError.unauthorized("Invalid refresh token");
+
+  const accessToken = await generateJwtToken({
+    userId: user.id,
+    email: user.email,
+  });
+  const refreshToken = await generateJwtToken({
+    userId: user.id,
+    email: user.email,
+  });
+  await db
+    .update(usersTable)
+    .set({ refreshToken })
+    .where(eq(usersTable.id, user.id));
+  return {
+    refreshToken,
+    accessToken,
+  };
+};
+
+export { registerUser, verifyEmail, login, logout, refreshToken };
