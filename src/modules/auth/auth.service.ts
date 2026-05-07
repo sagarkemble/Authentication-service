@@ -203,6 +203,35 @@ const changePassword = async function (
     .where(eq(usersTable.id, userId));
 };
 
+const resendVerificationEmail = async function (token: string, email: string) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+  if (!user) throw ApiError.notFound("User not found");
+  if (user.isVerified) throw ApiError.badRequest("Email is already verified");
+  if (!user.emailVerificationToken)
+    throw ApiError.badRequest(
+      "No verification token found. Please register again.",
+    );
+  const isValid = await hashUtils.compareHash(
+    token,
+    user.emailVerificationToken,
+  );
+  if (!isValid) throw ApiError.badRequest("Invalid or expired token");
+  const { token: newToken, hashedToken } =
+    await hashUtils.generateHashedToken();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+  await db
+    .update(usersTable)
+    .set({
+      emailVerificationToken: hashedToken,
+      emailVerificationTokenExpiresAt: expiresAt,
+    })
+    .where(eq(usersTable.email, email));
+  await sendVerificationEmail(email, newToken);
+};
+
 export {
   registerUser,
   verifyEmail,
@@ -212,4 +241,5 @@ export {
   forgotPassword,
   resetPassword,
   changePassword,
+  resendVerificationEmail,
 };

@@ -116,6 +116,12 @@ const changePassword = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "Password changed successfully");
 };
 
+const resendVerificationEmail = async function (req: Request, res: Response) {
+  const { token, email } = req.body;
+  await AuthService.resendVerificationEmail(token, email);
+  ApiResponse.ok(res, "Verification email resent successfully");
+};
+
 export {
   registerUser,
   getVerifyEmail,
@@ -127,4 +133,5 @@ export {
   getResetPassword,
   resetPassword,
   changePassword,
+  resendVerificationEmail,
 };

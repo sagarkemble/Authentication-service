@@ -8,6 +8,7 @@ import { authenticate } from "./auth.middleware";
 import forgotPasswordDto from "./dto/forgot-password.dto";
 import resetPasswordDto from "./dto/reset-password.dto";
 import changePasswordDto from "./dto/change-password.dto";
+import resendVerificationEmailDto from "./dto/resend-verify-email.dto";
 
 export const authRouter = router();
 authRouter.post(
@@ -42,4 +43,10 @@ authRouter.post(
   validateDto(changePasswordDto),
   authenticate,
   authController.changePassword,
+);
+
+authRouter.post(
+  "/resend-verify-email",
+  validateDto(resendVerificationEmailDto),
+  authController.resendVerificationEmail,
 );
