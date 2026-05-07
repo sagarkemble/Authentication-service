@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "clear && bun --watch ./src",
-    "build": "bun build ./src/ --outdir ./dist",
+    "build": "bun build ./src/index.ts --outdir ./dist --target=bun",
+    "start": "bun ./dist/index.js",
     "prepare": "husky",
     "commit": "cz",
     "db:up": "docker compose up -d",
