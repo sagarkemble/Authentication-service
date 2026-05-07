@@ -1,70 +1,154 @@
-<!-- src/modules/auth/templates/pages/verify-email.html -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email Verification</title>
+
+    <title>Confirm Email Change</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
+      :root {
+        --bg: #090909;
+
+        --card: #0d0d0d;
+
+        --text: #fafafa;
+
+        --muted: rgba(255, 255, 255, 0.6);
+
+        --success: #22c55e;
+
+        --success-bg: rgba(34, 197, 94, 0.08);
+
+        --error: #ef4444;
+
+        --error-bg: rgba(239, 68, 68, 0.08);
+
+        --shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+
       * {
-        box-sizing: border-box;
         margin: 0;
         padding: 0;
+
+        box-sizing: border-box;
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #f5f5f3;
         min-height: 100vh;
+
         display: flex;
+
         align-items: center;
+
         justify-content: center;
+
+        padding: 24px;
+
+        background: var(--bg);
+
+        color: var(--text);
+
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+
+        -webkit-font-smoothing: antialiased;
+
+        text-rendering: optimizeLegibility;
       }
 
       .card {
-        background: #ffffff;
-        border: 0.5px solid rgba(0, 0, 0, 0.1);
-        border-radius: 16px;
-        padding: 3rem 2.5rem;
+        width: 100%;
+
+        max-width: 400px;
+
+        min-height: 320px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: var(--card);
+
+        border-radius: 24px;
+
+        padding: 36px 32px;
+
         text-align: center;
-        max-width: 380px;
-        width: 90%;
+
+        box-shadow: var(--shadow);
+      }
+
+      #loadingState,
+      #successState,
+      #errorState {
+        width: 100%;
       }
 
       .icon-wrap {
         width: 64px;
+
         height: 64px;
-        border-radius: 50%;
+
+        border-radius: 9999px;
+
         display: flex;
+
         align-items: center;
+
         justify-content: center;
-        margin: 0 auto 1.5rem;
+
+        margin: 0 auto 24px;
+
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
       }
 
       .icon-wrap.loading {
-        background: #e8e8e8;
+        background: #111111;
       }
 
       .icon-wrap.success {
-        background: #eaf3de;
+        background: var(--success-bg);
       }
 
       .icon-wrap.error {
-        background: #fcebeb;
+        background: var(--error-bg);
       }
 
-      .icon-wrap svg {
-        width: 28px;
-        height: 28px;
+      svg {
+        width: 26px;
+
+        height: 26px;
       }
 
-      /* Loading spinner */
       .spinner {
-        width: 28px;
-        height: 28px;
-        border: 3px solid #e0e0e0;
-        border-top-color: #666;
-        border-radius: 50%;
+        width: 26px;
+
+        height: 26px;
+
+        border-radius: 9999px;
+
+        border: 2px solid rgba(255, 255, 255, 0.08);
+
+        border-top-color: #fafafa;
+
         animation: spin 0.8s linear infinite;
       }
 
@@ -75,93 +159,111 @@
       }
 
       h1 {
-        font-size: 20px;
-        font-weight: 500;
-        color: #1a1a1a;
-        margin-bottom: 8px;
+        font-size: 26px;
+
+        font-weight: 600;
+
+        letter-spacing: -1px;
+
+        line-height: 1.1;
+
+        margin-bottom: 12px;
       }
 
       p {
-        font-size: 15px;
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 2rem;
+        color: var(--muted);
+
+        font-size: 14px;
+
+        line-height: 1.7;
       }
 
       .btn {
-        display: inline-block;
+        width: 100%;
+
+        height: 44px;
+
+        border: none;
+
+        outline: none;
+
+        border-radius: 10px;
+
+        background: #fafafa;
+
+        color: #111111;
+
         font-size: 14px;
+
         font-weight: 500;
-        color: #1a1a1a;
-        background: transparent;
-        border: 0.5px solid rgba(0, 0, 0, 0.25);
-        border-radius: 8px;
-        padding: 10px 24px;
+
         cursor: pointer;
+
         text-decoration: none;
-        transition: background 0.15s;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        margin-top: 28px;
+
+        transition:
+          opacity 0.15s ease,
+          transform 0.15s ease;
       }
 
       .btn:hover {
-        background: #f5f5f3;
+        opacity: 0.92;
       }
+
       .btn:active {
-        transform: scale(0.98);
+        transform: scale(0.985);
       }
 
       .hidden {
         display: none;
       }
 
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #1a1a18;
-        }
+      @media (max-width: 640px) {
         .card {
-          background: #242422;
-          border-color: rgba(255, 255, 255, 0.1);
+          padding: 32px 24px;
+
+          border-radius: 20px;
+
+          min-height: 300px;
         }
+
         h1 {
-          color: #f0f0ee;
+          font-size: 22px;
+
+          letter-spacing: -0.8px;
         }
+
         p {
-          color: #999;
-        }
-        .icon-wrap.loading {
-          background: #2e2e2c;
-        }
-        .icon-wrap.success {
-          background: #2a3d1e;
-        }
-        .icon-wrap.error {
-          background: #3d1f1f;
-        }
-        .btn {
-          color: #f0f0ee;
-          border-color: rgba(255, 255, 255, 0.2);
-        }
-        .btn:hover {
-          background: #2e2e2c;
-        }
-        .spinner {
-          border-color: #444;
-          border-top-color: #999;
+          font-size: 13px;
         }
       }
     </style>
   </head>
+
   <body>
     <div class="card">
-      <!-- Loading State -->
+      <!-- Loading -->
+
       <div id="loadingState">
         <div class="icon-wrap loading">
           <div class="spinner"></div>
         </div>
-        <h1>Verifying your email...</h1>
-        <p>Please wait while we verify your email address.</p>
+
+        <h1>Confirming email</h1>
+
+        <p>Please wait while we confirm your new email address.</p>
       </div>
 
-      <!-- Success State -->
+      <!-- Success -->
+
       <div id="successState" class="hidden">
         <div class="icon-wrap success">
           <svg
@@ -170,20 +272,21 @@
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M5 13l4 4L19 7"
-              stroke="#3B6D11"
+              d="M5 13L9 17L19 7"
+              stroke="#22C55E"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
           </svg>
         </div>
-        <h1>Email Changed</h1>
-        <p>Your email address has been successfully changed.</p>
-        <a href="/login" class="btn">Continue to Login</a>
+        <h1>Email updated</h1>
+
+        <p>Your email address has been successfully updated.</p>
       </div>
 
-      <!-- Error State -->
+      <!-- Error -->
+
       <div id="errorState" class="hidden">
         <div class="icon-wrap error">
           <svg
@@ -192,39 +295,47 @@
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M12 8v4m0 4h.01M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
-              stroke="#A32D2D"
+              d="M12 8V12M12 16H12.01M22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12Z"
+              stroke="#EF4444"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
           </svg>
         </div>
-        <h1>Invalid or expired token</h1>
+
+        <h1>Confirmation failed</h1>
+
         <p id="errorMessage">
-          This verification link is no longer valid. It may have expired or
-          already been used. Request a new one to continue.
+          This email confirmation link is invalid or has expired.
         </p>
-        <a href="/resend-verification" class="btn">Resend email</a>
+
+        <button class="btn" id="resendBtn" onclick="resendVerificationEmail()">
+          Resend Verification
+        </button>
       </div>
     </div>
 
     <script>
-      // Get token from URL
       const urlParams = new URLSearchParams(window.location.search);
+
       const token = urlParams.get("token");
+
       const email = urlParams.get("email");
 
-      // DOM elements
       const loadingState = document.getElementById("loadingState");
+
       const successState = document.getElementById("successState");
+
       const errorState = document.getElementById("errorState");
+
       const errorMessage = document.getElementById("errorMessage");
 
-      // Function to show state
       function showState(state) {
         loadingState.classList.add("hidden");
+
         successState.classList.add("hidden");
+
         errorState.classList.add("hidden");
 
         if (state === "success") {
@@ -236,47 +347,97 @@
         }
       }
 
-      // Verify email on page load
       async function verifyEmail() {
-        // Check if token exists
         if (!token || !email) {
           showState("error");
+
           errorMessage.textContent =
-            "No verification token or email provided. Please check your email for the verification link.";
+            "Missing verification token or email address.";
+
           return;
         }
 
         try {
-          // Send POST request to verify endpoint
           const response = await fetch("/user/verify-email", {
             method: "POST",
+
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ token, email }),
+
+            body: JSON.stringify({
+              token,
+              email,
+            }),
           });
 
           const data = await response.json();
 
           if (response.ok && data.success) {
-            // Show success state
             showState("success");
           } else {
-            // Show error state
             showState("error");
+
             errorMessage.textContent =
               data.message ||
-              "This verification link is no longer valid. It may have expired or already been used.";
+              "This email confirmation link is invalid or expired.";
           }
         } catch (error) {
-          console.error("Verification error:", error);
+          console.error(error);
+
           showState("error");
+
           errorMessage.textContent =
-            "An error occurred while verifying your email. Please try again later.";
+            "Something went wrong while verifying your email.";
         }
       }
+      async function resendVerificationEmail() {
+        const resendBtn = document.getElementById("resendBtn");
 
-      // Run verification when page loads
+        resendBtn.disabled = true;
+
+        resendBtn.textContent = "Sending...";
+
+        try {
+          const response = await fetch("/user/resend-verify-email", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              token,
+              email,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            errorMessage.textContent =
+              "A new verification email has been sent.";
+
+            resendBtn.textContent = "Email sent";
+          } else {
+            errorMessage.textContent =
+              data?.message || "Failed to resend verification email.";
+
+            resendBtn.disabled = false;
+
+            resendBtn.textContent = "Resend Verification";
+          }
+        } catch (error) {
+          console.error(error);
+
+          errorMessage.textContent =
+            "Something went wrong while resending email.";
+
+          resendBtn.disabled = false;
+
+          resendBtn.textContent = "Resend Verification";
+        }
+      }
       verifyEmail();
     </script>
   </body>
