@@ -180,4 +180,40 @@ const uploadAvatar = async function (
   return avatar.url;
 };
 
-export { getMe, patchMe, deleteMe, changeEmail, verifyEmail, uploadAvatar };
+const resendVerificationEmail = async function (token: string, email: string) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+  if (!user) throw ApiError.notFound("User not found");
+  if (!user.changeEmailVerificationToken)
+    throw ApiError.badRequest(
+      "No verification token found. Please register again.",
+    );
+  const isValid = await hashUtils.compareHash(
+    token,
+    user.changeEmailVerificationToken,
+  );
+  if (!isValid) throw ApiError.badRequest("Invalid or expired token");
+  const { token: newToken, hashedToken } =
+    await hashUtils.generateHashedToken();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+  await db
+    .update(usersTable)
+    .set({
+      changeEmailVerificationToken: hashedToken,
+      changeEmailVerificationTokenExpiresAt: expiresAt,
+    })
+    .where(eq(usersTable.email, email));
+  await sendVerificationEmail(email, newToken);
+};
+
+export {
+  getMe,
+  patchMe,
+  deleteMe,
+  changeEmail,
+  verifyEmail,
+  uploadAvatar,
+  resendVerificationEmail,
+};

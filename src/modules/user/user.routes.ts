@@ -7,6 +7,7 @@ import deleteMeDto from "./dto/delete-me.dto";
 import changeEmailDto from "./dto/change-email.dto";
 import verifyEmailDto from "./dto/verify-email.dto";
 import { uploadAvatar } from "./user.middleware";
+import resendVerificationEmailDto from "./dto/resend-verify-email.dto";
 
 export const userRouter = router();
 
@@ -40,4 +41,9 @@ userRouter.post(
   authenticate,
   uploadAvatar,
   userController.uploadAvatar,
+);
+userRouter.post(
+  "/resend-verify-email",
+  validateDto(resendVerificationEmailDto),
+  userController.resendVerificationEmail,
 );

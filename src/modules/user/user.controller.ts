@@ -51,6 +51,12 @@ const uploadAvatar = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "Avatar uploaded successfully", { avatarUrl });
 };
 
+const resendVerificationEmail = async function (req: Request, res: Response) {
+  const { token, email } = req.body;
+  await UserService.resendVerificationEmail(token, email);
+  ApiResponse.ok(res, "Verification email resent successfully");
+};
+
 export {
   getMe,
   patchMe,
@@ -59,4 +65,5 @@ export {
   getVerifyEmail,
   verifyEmail,
   uploadAvatar,
+  resendVerificationEmail,
 };
