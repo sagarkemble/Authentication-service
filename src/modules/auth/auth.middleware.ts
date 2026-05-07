@@ -17,18 +17,9 @@ const authenticate = async function (
   const token = header.split(" ")[1];
   if (!token) throw ApiError.badRequest("Token is required");
   const decoded = verifyJwtToken(token) as { userId: string; email: string };
-  const [user] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.id, decoded.userId));
-  if (!user) throw ApiError.unauthorized("User not found");
-  if (user.isVerified === false)
-    throw ApiError.unauthorized("Email not verified");
-  const { id, firstName, lastName, email } = user;
+  const { userId, email } = decoded;
   req.user = {
-    id,
-    firstName,
-    lastName,
+    id: userId,
     email,
   };
   next();
