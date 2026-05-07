@@ -1,9 +1,6 @@
 import type { Response, Request, NextFunction } from "express";
 import ApiError from "../../common/utils/api-error.utils";
 import { verifyJwtToken } from "../../common/utils/jwt.utils";
-import usersTable from "./auth.model";
-import db from "../../common/config/db.config";
-import { eq } from "drizzle-orm";
 
 const authenticate = async function (
   req: Request,

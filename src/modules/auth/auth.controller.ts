@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
+import path from "path";
 import * as AuthService from "./auth.service";
 import ApiResponse from "../../common/utils/api-response.utils";
-import path from "path";
 import ApiError from "../../common/utils/api-error.utils";
+
 const registerUser = async function (req: Request, res: Response) {
   const { firstName, lastName, email, password } = req.body;
   const userData = await AuthService.registerUser(

@@ -5,7 +5,6 @@ import * as authController from "./auth.controller";
 import loginDto from "./dto/login.dto";
 import verifyEmailDto from "./dto/verify-email.dto";
 import { authenticate } from "./auth.middleware";
-import forgetPasswordDto from "./dto/forgot-password.dto";
 import forgotPasswordDto from "./dto/forgot-password.dto";
 import resetPasswordDto from "./dto/reset-password.dto";
 import changePasswordDto from "./dto/change-password.dto";

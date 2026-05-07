@@ -1,7 +1,7 @@
-import express, { urlencoded, type NextFunction } from "express";
+import express from "express";
+import cookieParser from "cookie-parser";
 import { authRouter } from "./modules/auth/auth.routes";
 import globalErrorHandler from "./common/middleware/globlaErrorHandler.middleware";
-import cookieParser from "cookie-parser";
 import { userRouter } from "./modules/user/user.routes";
 
 export const app = express();

@@ -2,11 +2,7 @@ import { eq } from "drizzle-orm";
 import db from "../../common/config/db.config";
 import usersTable from "./auth.model";
 import ApiError from "../../common/utils/api-error.utils";
-import {
-  compareHash,
-  generateHashedToken,
-  hashContent,
-} from "../../common/utils/hash.utils";
+import * as hashUtils from "../../common/utils/hash.utils";
 import {
   sendForgotPasswordEmail,
   sendVerificationEmail,
@@ -26,8 +22,8 @@ const registerUser = async function (
   if (existingUser.length > 0)
     throw ApiError.conflict("User with this email already exists");
 
-  const hashedPassword = await hashContent(password);
-  const { token, hashedToken } = await generateHashedToken();
+  const hashedPassword = await hashUtils.hashContent(password);
+  const { token, hashedToken } = await hashUtils.generateHashedToken();
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
   const [user] = await db
     .insert(usersTable)
@@ -52,7 +48,6 @@ const registerUser = async function (
 };
 
 const verifyEmail = async function (token: string, email: string) {
-  const hashedToken = await hashContent(token);
   const [user] = await db
     .select()
     .from(usersTable)
@@ -63,7 +58,10 @@ const verifyEmail = async function (token: string, email: string) {
     Date.now() > Number(user.emailVerificationTokenExpiresAt)
   )
     throw ApiError.badRequest("Invalid or expired token");
-  const isValid = await compareHash(token, user.emailVerificationToken);
+  const isValid = await hashUtils.compareHash(
+    token,
+    user.emailVerificationToken,
+  );
 
   if (!isValid) throw ApiError.badRequest("Invalid or expired token");
   await db
@@ -79,7 +77,7 @@ const login = async function name(email: string, password: string) {
     .where(eq(usersTable.email, email));
   if (!user) throw ApiError.notFound("User not found");
   if (!user.isVerified) throw ApiError.unauthorized("Email not verified");
-  const isPasswordValid = await compareHash(password, user.password);
+  const isPasswordValid = await hashUtils.compareHash(password, user.password);
   if (!isPasswordValid) throw ApiError.unauthorized("Invalid credentials");
   await db;
   const refreshToken = await generateJwtToken({
@@ -117,7 +115,7 @@ const refreshToken = async function (token: string) {
   if (!user || !user.refreshToken)
     throw ApiError.unauthorized("Invalid refresh token");
 
-  const isValid = await compareHash(token, user.refreshToken!);
+  const isValid = await hashUtils.compareHash(token, user.refreshToken!);
   if (!isValid) throw ApiError.unauthorized("Invalid refresh token");
 
   const accessToken = await generateJwtToken({
@@ -144,7 +142,7 @@ const forgotPassword = async function (email: string) {
     .from(usersTable)
     .where(eq(usersTable.email, email));
   if (!user) throw ApiError.notFound("User not found");
-  const { token, hashedToken } = await generateHashedToken();
+  const { token, hashedToken } = await hashUtils.generateHashedToken();
   await db
     .update(usersTable)
     .set({
@@ -168,9 +166,9 @@ const resetPassword = async function (
   if (!user || !user.passwordResetToken) {
     throw ApiError.badRequest("Invalid or expired token");
   }
-  const isValid = await compareHash(token, user.passwordResetToken);
+  const isValid = await hashUtils.compareHash(token, user.passwordResetToken);
   if (!isValid) throw ApiError.badRequest("Invalid or expired token");
-  const hashedPassword = await hashContent(newPassword);
+  const hashedPassword = await hashUtils.hashContent(newPassword);
   await db
     .update(usersTable)
     .set({
@@ -191,9 +189,12 @@ const changePassword = async function (
     .from(usersTable)
     .where(eq(usersTable.id, userId));
   if (!user) throw ApiError.notFound("User not found");
-  const isOldPasswordValid = await compareHash(oldPassword, user.password);
+  const isOldPasswordValid = await hashUtils.compareHash(
+    oldPassword,
+    user.password,
+  );
   if (!isOldPasswordValid) throw ApiError.unauthorized("Invalid old password");
-  const hashedPassword = await hashContent(newPassword);
+  const hashedPassword = await hashUtils.hashContent(newPassword);
   await db
     .update(usersTable)
     .set({ password: hashedPassword })

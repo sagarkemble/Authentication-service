@@ -1,6 +1,6 @@
 import path from "path";
-import { resend } from "../../common/config/email.config";
 import fs from "fs/promises";
+import { resend } from "../../common/config/email.config";
 
 const verificationTemplatePath = path.resolve(
   "src",

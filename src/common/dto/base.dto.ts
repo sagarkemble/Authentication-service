@@ -1,6 +1,6 @@
 import z from "zod";
-import ApiError from "../utils/api-error.utils.js";
 import type { Request } from "express";
+import ApiError from "../utils/api-error.utils.js";
 
 class BaseDto {
   static schema = z.object({});

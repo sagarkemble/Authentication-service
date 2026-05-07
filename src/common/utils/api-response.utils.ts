@@ -1,4 +1,5 @@
 import type { Response } from "express";
+
 class ApiResponse {
   static ok(res: Response, message: string, data?: unknown) {
     return res.status(200).json({

@@ -1,12 +1,11 @@
 import { eq } from "drizzle-orm";
+import type ImageKit from "@imagekit/nodejs";
+import type User from "../../types/user";
 import db from "../../common/config/db.config";
 import usersTable from "../auth/auth.model";
-import type User from "../../types/user";
 import ApiError from "../../common/utils/api-error.utils";
 import * as hashUtils from "../../common/utils/hash.utils";
 import { sendVerificationEmail } from "./user.email.service";
-import path from "path";
-import type ImageKit from "@imagekit/nodejs";
 import { imageKit } from "../../common/config/image-kit.config";
 
 const getMe = async function (userId: string) {
