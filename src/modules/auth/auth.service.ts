@@ -232,6 +232,30 @@ const resendVerificationEmail = async function (token: string, email: string) {
   await sendVerificationEmail(email, newToken);
 };
 
+const resendResetPasswordEmail = async function (token: string, email: string) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+  if (!user) throw ApiError.notFound("User not found");
+  if (!user.passwordResetToken)
+    throw ApiError.badRequest(
+      "No password reset token found. Please initiate forgot password flow again.",
+    );
+  const isValid = await hashUtils.compareHash(token, user.passwordResetToken);
+  if (!isValid) throw ApiError.badRequest("Invalid or expired token");
+  const { token: newToken, hashedToken } =
+    await hashUtils.generateHashedToken();
+  await db
+    .update(usersTable)
+    .set({
+      passwordResetToken: hashedToken,
+      passwordResetTokenExpiresAt: new Date(Date.now() + 15 * 60 * 1000),
+    })
+    .where(eq(usersTable.email, email));
+  await sendForgotPasswordEmail(email, newToken);
+};
+
 export {
   registerUser,
   verifyEmail,
@@ -242,4 +266,5 @@ export {
   resetPassword,
   changePassword,
   resendVerificationEmail,
+  resendResetPasswordEmail,
 };

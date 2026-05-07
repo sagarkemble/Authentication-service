@@ -50,3 +50,9 @@ authRouter.post(
   validateDto(resendVerificationEmailDto),
   authController.resendVerificationEmail,
 );
+
+authRouter.post(
+  "/resend-forgot-password",
+  validateDto(resendVerificationEmailDto),
+  authController.resendResetPasswordEmail,
+);
