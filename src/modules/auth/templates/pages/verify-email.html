@@ -40,6 +40,7 @@
 
       * {
         margin: 0;
+
         padding: 0;
 
         box-sizing: border-box;
@@ -87,7 +88,7 @@
 
         background: var(--card);
 
-        border-radius: 24px;
+        border-radius: 20px;
 
         padding: 36px 32px;
 
@@ -97,9 +98,18 @@
       }
 
       #loadingState,
-      #successState,
+      #successState {
+        width: 100%;
+      }
+
       #errorState {
         width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
       }
 
       .icon-wrap {
@@ -115,21 +125,21 @@
 
         justify-content: center;
 
-        margin: 0 auto 24px;
+        margin: 0 auto 26px;
 
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+        transition: all 0.25s ease;
       }
 
       .icon-wrap.loading {
         background: #111111;
       }
 
-      .icon-wrap.success {
-        background: var(--success-bg);
-      }
-
       .icon-wrap.error {
         background: var(--error-bg);
+      }
+
+      .icon-wrap.success {
+        background: var(--success-bg);
       }
 
       svg {
@@ -159,23 +169,31 @@
       }
 
       h1 {
-        font-size: 26px;
+        font-size: 24px;
 
         font-weight: 600;
 
+        line-height: 1.15;
+
         letter-spacing: -1px;
 
-        line-height: 1.1;
-
-        margin-bottom: 12px;
+        margin-bottom: 14px;
       }
 
       p {
         color: var(--muted);
 
-        font-size: 14px;
+        font-size: 15px;
 
-        line-height: 1.7;
+        line-height: 1.6;
+      }
+
+      #errorTitle {
+        margin-bottom: 10px;
+      }
+
+      #errorMessage {
+        margin-bottom: 28px;
       }
 
       .btn {
@@ -199,15 +217,11 @@
 
         cursor: pointer;
 
-        text-decoration: none;
-
         display: inline-flex;
 
         align-items: center;
 
         justify-content: center;
-
-        margin-top: 28px;
 
         transition:
           opacity 0.15s ease,
@@ -215,34 +229,36 @@
       }
 
       .btn:hover {
-        opacity: 0.92;
+        opacity: 0.94;
       }
 
       .btn:active {
         transform: scale(0.985);
       }
 
+      .btn:disabled {
+        opacity: 0.7;
+
+        cursor: not-allowed;
+      }
+
       .hidden {
-        display: none;
+        display: none !important;
       }
 
       @media (max-width: 640px) {
         .card {
-          padding: 32px 24px;
+          padding: 34px 24px;
 
           border-radius: 20px;
-
-          min-height: 300px;
         }
 
         h1 {
           font-size: 22px;
-
-          letter-spacing: -0.8px;
         }
 
         p {
-          font-size: 13px;
+          font-size: 14px;
         }
       }
     </style>
@@ -289,8 +305,9 @@
       <!-- Error -->
 
       <div id="errorState" class="hidden">
-        <div class="icon-wrap error">
+        <div class="icon-wrap error" id="iconWrap">
           <svg
+            id="statusIcon"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -305,11 +322,9 @@
           </svg>
         </div>
 
-        <h1>Verification failed</h1>
+        <h1 id="errorTitle">Verification failed</h1>
 
-        <p id="errorMessage">
-          This verification link is invalid or has expired.
-        </p>
+        <p id="errorMessage">Invalid or expired token</p>
 
         <button class="btn" id="resendBtn" onclick="resendVerificationEmail()">
           Resend Verification
@@ -331,6 +346,12 @@
       const errorState = document.getElementById("errorState");
 
       const errorMessage = document.getElementById("errorMessage");
+
+      const errorTitle = document.getElementById("errorTitle");
+
+      const iconWrap = document.getElementById("iconWrap");
+
+      const statusIcon = document.getElementById("statusIcon");
 
       function showState(state) {
         loadingState.classList.add("hidden");
@@ -380,7 +401,9 @@
             showState("error");
 
             errorMessage.textContent =
-              data.message || "This verification link is invalid or expired.";
+              data?.error?.message ||
+              data?.message ||
+              "Invalid or expired token";
           }
         } catch (error) {
           console.error(error);
@@ -391,6 +414,7 @@
             "Something went wrong while verifying your email.";
         }
       }
+
       async function resendVerificationEmail() {
         const resendBtn = document.getElementById("resendBtn");
 
@@ -415,17 +439,61 @@
           const data = await response.json();
 
           if (response.ok && data.success) {
+            iconWrap.classList.remove("error");
+
+            iconWrap.classList.add("success");
+
+            iconWrap.style.background = "rgba(59, 130, 246, 0.08)";
+
+            statusIcon.innerHTML = `
+    <path
+      d="M3 8L10.89 13.26C11.5547 13.7031 12.4453 13.7031 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z"
+      stroke="#3B82F6"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  `;
+
+            errorTitle.textContent = "Verification email sent";
+
             errorMessage.textContent =
-              "A new verification email has been sent.";
+              "A fresh verification link has been sent to your email address.";
 
             resendBtn.textContent = "Email sent";
+
+            resendBtn.disabled = true;
           } else {
-            errorMessage.textContent =
-              data?.message || "Failed to resend verification email.";
+            const errorMsg =
+              data?.error?.message ||
+              data?.message ||
+              "Failed to resend verification email.";
 
-            resendBtn.disabled = false;
+            errorMessage.textContent = errorMsg;
 
-            resendBtn.textContent = "Resend Verification";
+            const lowerError = errorMsg.toLowerCase();
+
+            if (
+              lowerError.includes("already verified") ||
+              lowerError.includes("no verification token found") ||
+              lowerError.includes("register again")
+            ) {
+              resendBtn.disabled = true;
+
+              if (lowerError.includes("already verified")) {
+                errorTitle.textContent = "Email already verified";
+
+                resendBtn.textContent = "Already verified";
+              } else {
+                errorTitle.textContent = "Verification unavailable";
+
+                resendBtn.textContent = "Unavailable";
+              }
+            } else {
+              resendBtn.disabled = false;
+
+              resendBtn.textContent = "Resend Verification";
+            }
           }
         } catch (error) {
           console.error(error);
@@ -433,9 +501,9 @@
           errorMessage.textContent =
             "Something went wrong while resending email.";
 
-          resendBtn.disabled = false;
-
           resendBtn.textContent = "Resend Verification";
+
+          resendBtn.disabled = false;
         }
       }
 

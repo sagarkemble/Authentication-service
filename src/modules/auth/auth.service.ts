@@ -168,6 +168,8 @@ const resetPassword = async function (
   }
   const isValid = await hashUtils.compareHash(token, user.passwordResetToken);
   if (!isValid) throw ApiError.badRequest("Invalid or expired token");
+  if (Date.now() > Number(user.passwordResetTokenExpiresAt))
+    throw ApiError.badRequest("Invalid or expired token");
   const hashedPassword = await hashUtils.hashContent(newPassword);
   await db
     .update(usersTable)

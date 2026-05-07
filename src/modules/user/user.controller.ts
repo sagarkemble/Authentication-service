@@ -50,6 +50,7 @@ const uploadAvatar = async function (req: Request, res: Response) {
   const avatarUrl = await UserService.uploadAvatar(req.file!, req.user!.id);
   ApiResponse.ok(res, "Avatar uploaded successfully", { avatarUrl });
 };
+
 export {
   getMe,
   patchMe,
