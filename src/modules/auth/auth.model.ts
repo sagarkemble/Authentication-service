@@ -20,7 +20,7 @@ const usersTable = pgTable("users", {
   refreshToken: text("refresh_token"),
   passwordResetToken: text("password_reset_token"),
   emailVerificationToken: text("email_verification_token"),
-  changeEmailVerificationToken: timestamp("change_email_verification_token"),
+  changeEmailVerificationToken: text("change_email_verification_token"),
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
   passwordResetTokenExpiresAt: timestamp("password_reset_token_expires_at"),
   emailVerificationTokenExpiresAt: timestamp(

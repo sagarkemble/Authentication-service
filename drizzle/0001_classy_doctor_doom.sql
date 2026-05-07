@@ -1,0 +1,1 @@
+ALTER TABLE "users" ALTER COLUMN "change_email_verification_token" SET DATA TYPE text;

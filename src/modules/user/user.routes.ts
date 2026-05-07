@@ -4,6 +4,8 @@ import * as userController from "./user.controller";
 import patchMeDto from "./dto/patch-me.dto";
 import validateDto from "../../common/middleware/validateDto.middleware";
 import deleteMeDto from "./dto/delete-me.dto";
+import changeEmailDto from "./dto/change-email.dto";
+import verifyEmailDto from "./dto/verify-email.dto";
 
 export const userRouter = router();
 
@@ -20,6 +22,15 @@ userRouter.delete(
   validateDto(deleteMeDto),
   userController.deleteMe,
 );
-// userRouter.post("/change-email");
-// userRouter.get("/change-email");
-// userRouter.post("/verify-email");
+userRouter.post(
+  "/change-email",
+  authenticate,
+  validateDto(changeEmailDto),
+  userController.changeEmail,
+);
+userRouter.get("/verify-email", userController.getVerifyEmail);
+userRouter.post(
+  "/verify-email",
+  validateDto(verifyEmailDto),
+  userController.verifyEmail,
+);
