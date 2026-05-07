@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import db from "../../common/config/db.config";
 import usersTable from "../auth/auth.model";
 import type User from "../../types/user";
+import ApiError from "../../common/utils/api-error.utils";
+import * as hashUtils from "../../common/utils/hash.utils";
 
 const getMe = async function (userId: string) {
   const [user] = await db
@@ -64,4 +66,23 @@ const patchMe = async function (
   return safeUser;
 };
 
-export { getMe, patchMe };
+const deleteMe = async function (userId: string, password: string) {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, userId))
+    .limit(1);
+  if (!user) {
+    throw ApiError.notFound("User not found");
+  }
+  const isValidPassword = await hashUtils.compareHash(password, user.password);
+  console.log(isValidPassword);
+
+  if (!isValidPassword) {
+    throw ApiError.unauthorized("Invalid password");
+  }
+  await db.delete(usersTable).where(eq(usersTable.id, userId));
+  return;
+};
+
+export { getMe, patchMe, deleteMe };

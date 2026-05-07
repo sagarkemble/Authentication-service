@@ -15,4 +15,8 @@ const patchMe = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "User data updated successfully", userData);
 };
 
-export { getMe, patchMe };
+const deleteMe = async function (req: Request, res: Response) {
+  await UserService.deleteMe(req.user!.id, req.body.password);
+  ApiResponse.ok(res, "User account deleted successfully");
+};
+export { getMe, patchMe, deleteMe };
