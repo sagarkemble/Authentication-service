@@ -8,12 +8,11 @@ class BaseDto {
     const parsedData = this.schema.safeParse(data);
 
     if (parsedData.error) {
-      const formatedError = parsedData.error.issues.map((issue) => ({
-        path: issue.path,
-        message: issue.message,
+      const formattedError = parsedData.error.issues.map((issue) => ({
+        [issue.path[0] as string]: issue.message,
       }));
 
-      throw ApiError.badRequest("Invalid data", formatedError);
+      throw ApiError.badRequest("Invalid data", formattedError);
     }
     return parsedData.data;
   }
