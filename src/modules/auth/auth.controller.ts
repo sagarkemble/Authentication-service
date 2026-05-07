@@ -37,8 +37,6 @@ const getVerifyEmail = async function (req: Request, res: Response) {
 };
 
 const login = async function (req: Request, res: Response) {
-  console.log("hi");
-
   const { email, password } = req.body;
   const userData = await AuthService.login(email, password);
   res.cookie("refreshToken", userData.refreshToken, {

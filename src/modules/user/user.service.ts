@@ -5,6 +5,9 @@ import type User from "../../types/user";
 import ApiError from "../../common/utils/api-error.utils";
 import * as hashUtils from "../../common/utils/hash.utils";
 import { sendVerificationEmail } from "./user.email.service";
+import path from "path";
+import type ImageKit from "@imagekit/nodejs";
+import { imageKit } from "../../common/config/image-kit.config";
 
 const getMe = async function (userId: string) {
   const [user] = await db
@@ -77,7 +80,6 @@ const deleteMe = async function (userId: string, password: string) {
     throw ApiError.notFound("User not found");
   }
   const isValidPassword = await hashUtils.compareHash(password, user.password);
-  console.log(isValidPassword);
 
   if (!isValidPassword) {
     throw ApiError.unauthorized("Invalid password");
@@ -151,4 +153,32 @@ const verifyEmail = async function (token: string, email: string) {
     .where(eq(usersTable.email, email));
 };
 
-export { getMe, patchMe, deleteMe, changeEmail, verifyEmail };
+const uploadAvatar = async function (
+  file: Express.Multer.File,
+  userId: string,
+) {
+  if (!file) throw ApiError.badRequest("PNG/JPEG file required");
+  const params: ImageKit.FileUploadParams = {
+    file: file.buffer.toString("base64"),
+    fileName: file.originalname,
+    folder: "auth-service-avatars",
+  };
+  const avatar: ImageKit.FileUploadResponse =
+    await imageKit.files.upload(params);
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, userId))
+    .limit(1);
+  if (!user) throw ApiError.notFound("User not found");
+  if (user.avatarId) {
+    await imageKit.files.delete(user.avatarId);
+  }
+  await db
+    .update(usersTable)
+    .set({ avatarUrl: avatar.url, avatarId: avatar.fileId })
+    .where(eq(usersTable.id, userId));
+  return avatar.url;
+};
+
+export { getMe, patchMe, deleteMe, changeEmail, verifyEmail, uploadAvatar };

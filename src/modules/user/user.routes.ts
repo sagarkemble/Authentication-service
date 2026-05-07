@@ -6,6 +6,7 @@ import validateDto from "../../common/middleware/validateDto.middleware";
 import deleteMeDto from "./dto/delete-me.dto";
 import changeEmailDto from "./dto/change-email.dto";
 import verifyEmailDto from "./dto/verify-email.dto";
+import { uploadAvatar } from "./user.middleware";
 
 export const userRouter = router();
 
@@ -33,4 +34,10 @@ userRouter.post(
   "/verify-email",
   validateDto(verifyEmailDto),
   userController.verifyEmail,
+);
+userRouter.post(
+  "/avatar",
+  authenticate,
+  uploadAvatar,
+  userController.uploadAvatar,
 );

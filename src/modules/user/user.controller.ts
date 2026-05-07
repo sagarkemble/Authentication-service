@@ -44,4 +44,17 @@ const verifyEmail = async function (req: Request, res: Response) {
   await UserService.verifyEmail(token, email);
   ApiResponse.ok(res, "Email changed successfully.");
 };
-export { getMe, patchMe, deleteMe, changeEmail, getVerifyEmail, verifyEmail };
+
+const uploadAvatar = async function (req: Request, res: Response) {
+  const avatarUrl = await UserService.uploadAvatar(req.file!, req.user!.id);
+  ApiResponse.ok(res, "Avatar uploaded successfully", { avatarUrl });
+};
+export {
+  getMe,
+  patchMe,
+  deleteMe,
+  changeEmail,
+  getVerifyEmail,
+  verifyEmail,
+  uploadAvatar,
+};
