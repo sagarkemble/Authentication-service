@@ -23,4 +23,45 @@ const getMe = async function (userId: string) {
   return safeUser;
 };
 
-export { getMe };
+const patchMe = async function (
+  {
+    firstName,
+    lastName,
+    avatarUrl,
+  }: { firstName?: string; lastName?: string; avatarUrl?: string },
+  userId: string,
+) {
+  const updateData = {} as {
+    firstName?: string;
+    lastName?: string;
+    avatarUrl?: string;
+  };
+  if (firstName) updateData.firstName = firstName;
+  if (lastName) updateData.lastName = lastName;
+  if (avatarUrl) updateData.avatarUrl = avatarUrl;
+  const [updatedUser] = await db
+    .update(usersTable)
+    .set(updateData)
+    .where(eq(usersTable.id, userId))
+    .returning();
+  const {
+    id,
+    firstName: _firstName,
+    lastName: _lastName,
+    email,
+    avatarUrl: _avatarUrl,
+    isVerified,
+  } = updatedUser as User;
+
+  const safeUser = {
+    id,
+    firstName: _firstName,
+    lastName: _lastName,
+    email,
+    avatarUrl: _avatarUrl,
+    isVerified,
+  };
+  return safeUser;
+};
+
+export { getMe, patchMe };

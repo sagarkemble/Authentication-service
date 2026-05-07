@@ -6,4 +6,13 @@ const getMe = async function (req: Request, res: Response) {
   ApiResponse.ok(res, "User data retrieved successfully", userData);
 };
 
-export { getMe };
+const patchMe = async function (req: Request, res: Response) {
+  const { firstName, lastName, avatarUrl } = req.body;
+  const userData = await UserService.patchMe(
+    { firstName, lastName, avatarUrl },
+    req.user!.id,
+  );
+  ApiResponse.ok(res, "User data updated successfully", userData);
+};
+
+export { getMe, patchMe };
