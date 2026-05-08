@@ -403,6 +403,27 @@ Resend the email change verification link with a fresh token.
 
 ---
 
+#### `GET /health`
+
+Health check endpoint used for uptime monitoring, container orchestration, and load balancer checks.
+
+**No authentication required.**
+
+**Success Response** - `200 OK`
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "status": 200,
+  "message": "Server is healthy",
+  "data": {
+    "uptime": 124.52,
+    "timestamp": "2026-05-08T00:00:00.000Z"
+  }
+}
+```
+
 ## Response Format
 
 **Success**
