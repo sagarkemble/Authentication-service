@@ -76,7 +76,7 @@ const login = async function name(email: string, password: string) {
     .from(usersTable)
     .where(eq(usersTable.email, email));
   if (!user) throw ApiError.notFound("User not found");
-  if (!user.isVerified) throw ApiError.unauthorized("Email not verified");
+  if (!user.isVerified) throw ApiError.forbidden("Email not verified");
   const isPasswordValid = await hashUtils.compareHash(password, user.password);
   if (!isPasswordValid) throw ApiError.unauthorized("Invalid credentials");
   await db;

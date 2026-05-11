@@ -10,7 +10,7 @@ import ApiResponse from "./common/utils/api-response.utils";
 export const app = express();
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || [],
+    origin: process.env.ALLOWED_ORIGINS?.split(","),
     credentials: true,
   }),
 );
