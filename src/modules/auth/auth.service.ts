@@ -88,6 +88,11 @@ const login = async function name(email: string, password: string) {
     userId: user.id,
     email: user.email,
   });
+  const hashedRefreshToken = await hashUtils.hashContent(refreshToken);
+  await db
+    .update(usersTable)
+    .set({ refreshToken: hashedRefreshToken })
+    .where(eq(usersTable.id, user.id));
   return {
     firstName: user.firstName,
     lastName: user.lastName,
@@ -126,9 +131,10 @@ const refreshToken = async function (token: string) {
     userId: user.id,
     email: user.email,
   });
+  const hashedRefreshToken = await hashUtils.hashContent(refreshToken);
   await db
     .update(usersTable)
-    .set({ refreshToken })
+    .set({ refreshToken: hashedRefreshToken })
     .where(eq(usersTable.id, user.id));
   return {
     refreshToken,
