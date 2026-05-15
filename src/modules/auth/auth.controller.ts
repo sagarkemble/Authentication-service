@@ -53,7 +53,7 @@ const login = async function (req: Request, res: Response) {
 const logout = async function (req: Request, res: Response) {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken)
-    return ApiError.badRequest("Refresh token is required for logout");
+    throw ApiError.badRequest("Refresh token is required for logout");
   await AuthService.logout(refreshToken);
   res.clearCookie("refreshToken", {
     httpOnly: true,
