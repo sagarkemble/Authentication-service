@@ -40,12 +40,15 @@ const getVerifyEmail = async function (req: Request, res: Response) {
 const login = async function (req: Request, res: Response) {
   const { email, password } = req.body;
   const userData = await AuthService.login(email, password);
+  const isProduction = process.env.ENV === "production";
+
   res.cookie("refreshToken", userData.refreshToken, {
     httpOnly: true,
-    secure: process.env.ENV === "production",
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
+
   const { refreshToken, ...safeUserData } = userData;
   ApiResponse.ok(res, "Login successful", safeUserData);
 };
@@ -55,10 +58,12 @@ const logout = async function (req: Request, res: Response) {
   if (!refreshToken)
     throw ApiError.badRequest("Refresh token is required for logout");
   await AuthService.logout(refreshToken);
+  const isProduction = process.env.ENV === "production";
+
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.ENV === "production",
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
   ApiResponse.ok(res, "Logout successful");
 };
@@ -72,11 +77,12 @@ const refreshToken = async function (req: Request, res: Response) {
     );
   const { refreshToken: newRefreshToken, accessToken } =
     await AuthService.refreshToken(refreshToken);
+  const isProduction = process.env.ENV === "production";
 
   res.cookie("refreshToken", newRefreshToken, {
     httpOnly: true,
-    secure: process.env.ENV === "production",
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   ApiResponse.ok(res, "Access token refreshed successfully", { accessToken });
